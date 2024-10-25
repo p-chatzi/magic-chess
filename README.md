@@ -2,11 +2,11 @@
 <h2 align="center"> Your imagination is your queen</h2>
 
 # Magic chess
-What I want
-Can be played as traditional chess.
-Can invent pieces.
-Play vs computer
-Play vs player
+What I want  
+Can be played as traditional chess.  
+Can invent pieces.  
+Play vs computer  
+Play vs player  
 Play vs players online! (finish game traditional chess first)
 
 # To do list
