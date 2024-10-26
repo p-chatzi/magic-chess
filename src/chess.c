@@ -24,6 +24,8 @@ typedef struct pieces_s
 	bool is_alive;
 } pieces;
 
+void foo(pieces* p);
+
 int main()
 {
 	printf("\033[2J\033[H"); // Clear terminal
