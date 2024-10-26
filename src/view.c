@@ -1,10 +1,8 @@
-#include <stdio.h> // printf()
+#include <stdio.h>
 
 #include "view.h"
 #include "model.h"
 
-// =======================================================================
-// io
 int choose_main_menu()
 {
     int choice = -1;
@@ -20,12 +18,40 @@ int choose_main_menu()
 //     return color;
 // }
 
-// =======================================================================
-// Purely outputs
 void print_board(board_s *board)
 {
-    print_test_pieces(&board->player[BLACK], BLACK);
     print_test_pieces(&board->player[WHITE], WHITE);
+    print_test_pieces(&board->player[BLACK], BLACK);
+
+    for (int x = 0; x < NUM_ROW; x++)
+    {
+        printf("\n\n");
+        for (int y = 0; y < NUM_COL; y++)
+        {
+            int to_print = 0, which_piece = -1, which_color = -1;
+            for (int piece = 0; piece < NUM_PIECES; piece++)
+            {
+                if (board->player[WHITE][piece].pos.x == x && board->player[WHITE][piece].pos.y == y && board->player[WHITE][piece].is_alive == 1)
+                {
+                    to_print++;
+                    which_piece = piece;
+                    which_color = WHITE;
+                }
+                if (board->player[BLACK][piece].pos.x == x && board->player[BLACK][piece].pos.y == y && board->player[BLACK][piece].is_alive == 1)
+                {
+                    to_print++;
+                    which_piece = piece;
+                    which_color = BLACK;
+                }
+            }
+            if (to_print == 1 && (which_color == WHITE || which_color == BLACK))
+            {
+                printf("%d.%d ", which_color, board->player[which_color][which_piece].piece_type);
+            }
+            else
+                printf("... ");
+        }
+    }
 }
 
 void print_test_pieces(pieces_s *pieces, player_e player)
@@ -126,7 +152,7 @@ void print_rules()
     printf("⣿   50-move rule                                                              ⣿\n");
     printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
 }
-/*WIP*/
+
 void print_settings()
 {
     print_wip();
@@ -171,58 +197,3 @@ void clear_terminal()
 {
     printf("\033[2J\033[H");
 }
-
-// Pieces drawn in ascii
-/*
-void print_queen()
-{
-    printf(
-        "	  o   o      "\n
-        " o   /\ /\  o   "\n
-        " \`.'  `  `'/   "\n
-        "  \    Q   /     "\n
-        "	\_.--._/       "\n
-        "	'.____.'       "\n);
-}
-  _   _
- | |_| |
- |  R  |
- '-----'
- |     |
-/_.---._\
-'._____.'
-
-
-    .-"-.
-    `.P.'
-    .' '.
-   .'___'.
-   `-----'
-
-          / \
-         ( B )
-          \ /
-          | |
-        ._' '_.
-        '-----'
-
-
-            _
-           (+)
-        .-. ^ .-.
-       :   `.'   :
-       `.  King .'
-        )_.---._(
-        `._____.'
-
-
-      |\.
-     /   '.
-    /_.'- \
-     / Kn |
-    /_____|
-    `.___.'
-
-
-
-*/

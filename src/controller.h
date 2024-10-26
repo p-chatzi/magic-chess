@@ -6,7 +6,6 @@
 void boot_magic_chess();
 void start_game(board_s *board);
 void load_game(board_s *board);
-// void set_color();
 void reset_board(board_s *board);
 
 #endif

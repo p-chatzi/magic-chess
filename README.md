@@ -15,8 +15,8 @@ What I want:
 - [x] Boot screen
 - [x] Bye screen
 - [x] Rules screen
-- [ ] Draw board*
-- [ ] Draw pieces*
+- [x] Draw board*
+- [x] Draw pieces*
 - [ ] Update pieces*
  
 ## Input

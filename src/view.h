@@ -3,12 +3,11 @@
 
 #include "model.h"
 
-// io
+
 int choose_main_menu();
-// int choose_color();
 void print_board();
 
-// Output only
+
 void print_main_menu();
 void print_byecat();
 void print_hellowep();

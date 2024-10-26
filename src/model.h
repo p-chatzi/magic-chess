@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <stdbool.h> // bool
+#include <stdbool.h>
 
 #define NUM_ROW 8
 #define NUM_COL 8
@@ -13,6 +13,15 @@ typedef enum player_e
 
     NUM_PLAYERS
 } player_e;
+
+typedef enum menu_e
+{
+    START = 1,
+    LOAD,
+    RULES,
+    SETTINGS,
+    QUIT
+} menu_options_e;
 
 typedef enum piece_type
 {
