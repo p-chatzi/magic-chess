@@ -1,0 +1,9 @@
+{
+    "makefile.configureOnOpen": false,
+    "files.associations": {
+        "controller.h": "c",
+        "view.h": "c",
+        "model.h": "c",
+        "stdbool.h": "c"
+    }
+}

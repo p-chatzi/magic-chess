@@ -1,3 +1,6 @@
+#Variables
+FLAGS := -Wall
+
 default: run
 
 setup:
@@ -7,7 +10,7 @@ clean:
 	rm -rf out
 
 build: setup
-	gcc src/chess.c -o out/chess
+	gcc $(FLAGS) src/*.c -o out/chess
 
 run: build
 	./out/chess
