@@ -41,12 +41,16 @@ typedef struct pos
     unsigned int y;
 } position_s;
 
+bool is_pos_equal(position_s a, position_s b);
+
 typedef struct pieces
 {
     piece_type_e piece_type;
     position_s pos;
     bool is_alive;
 } pieces_s;
+
+bool has_live_piece_at(const pieces_s *p, position_s pos);
 
 typedef struct board
 {

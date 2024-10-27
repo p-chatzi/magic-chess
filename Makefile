@@ -1,5 +1,5 @@
 #Variables
-FLAGS := -Wall
+FLAGS := -Wall -g -O0
 
 default: run
 

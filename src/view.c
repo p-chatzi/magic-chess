@@ -10,14 +10,6 @@ int choose_main_menu()
     return choice;
 }
 
-// int choose_color()
-// {
-//     char color;
-//     printf("\nPlayer, now is your time to pick your color (w: white | b:black):");
-//     scanf("%c", &color);
-//     return color;
-// }
-
 void print_board(board_s *board)
 {
     print_test_pieces(&board->player[WHITE], WHITE);
@@ -28,28 +20,29 @@ void print_board(board_s *board)
         printf("\n\n");
         for (int y = 0; y < NUM_COL; y++)
         {
-            int to_print = 0, which_piece = -1, which_color = -1;
-            for (int piece = 0; piece < NUM_PIECES; piece++)
+            bool was_piece_found = 0;
+            piece_type_e piece_found = PAWN;
+            player_e player_found = WHITE;
+
+            for (piece_type_e piece = PAWN; piece < NUM_PIECES; piece++)
             {
-                if (board->player[WHITE][piece].pos.x == x && board->player[WHITE][piece].pos.y == y && board->player[WHITE][piece].is_alive == 1)
+                for (player_e color = WHITE; color < NUM_PLAYERS; color++)
                 {
-                    to_print++;
-                    which_piece = piece;
-                    which_color = WHITE;
-                }
-                if (board->player[BLACK][piece].pos.x == x && board->player[BLACK][piece].pos.y == y && board->player[BLACK][piece].is_alive == 1)
-                {
-                    to_print++;
-                    which_piece = piece;
-                    which_color = BLACK;
+                    position_s pos = {.x = x, .y = y};
+
+                    if (has_live_piece_at(&board->player[color][piece], pos))
+                    {
+                        was_piece_found = true;
+                        piece_found = board->player[color][piece].piece_type;
+                        player_found = color;
+                    }
                 }
             }
-            if (to_print == 1 && (which_color == WHITE || which_color == BLACK))
-            {
-                printf("%d.%d ", which_color, board->player[which_color][which_piece].piece_type);
-            }
+
+            if (was_piece_found)
+                printf("%d.%02d ", player_found, piece_found);
             else
-                printf("... ");
+                printf(".... ");
         }
     }
 }
@@ -63,6 +56,13 @@ void print_test_pieces(pieces_s *pieces, player_e player)
         printf("\nPlayer %d, piece % d, y = %d", player, i, pieces[i].pos.y);
         printf("\nPlayer %d, piece % d, alive = %d", player, i, pieces[i].is_alive);
     }
+}
+
+void get_player_choice(int player_move[4])
+{
+    printf("\nEnter your move (enter after each int): ");
+    for (int i = 0; i < 4; i++)
+        scanf("%d", &player_move[i]);
 }
 
 void print_main_menu()
@@ -82,7 +82,7 @@ void print_main_menu()
 void print_byecat()
 {
     printf("\n  Bye bye, see you soon :3   \n");
-    printf("       					 ⢀⡀⠀⠀⠀⠀ \n");
+    printf("       		     ⢀⡀⠀⠀⠀⠀ \n");
     printf("⠀⠀⠀⠀⢀⡴⣆⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⣼⣿⡗⠀⠀⠀⠀\n");
     printf("⠀⠀⠀⣠⠟⠀⠘⠷⠶⠶⠶⠾⠉⢳⡄⠀⠀⠀⠀⠀⣧⣿⠀⠀⠀⠀⠀\n");
     printf("⠀⠀⣰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣤⣤⣤⣤⣤⣿⢿⣄⠀⠀⠀⠀\n");

@@ -3,10 +3,9 @@
 
 #include "model.h"
 
-
 int choose_main_menu();
 void print_board();
-
+void get_player_choice();
 
 void print_main_menu();
 void print_byecat();
