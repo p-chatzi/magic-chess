@@ -4,6 +4,7 @@
         "controller.h": "c",
         "view.h": "c",
         "model.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "cstdlib": "c"
     }
 }

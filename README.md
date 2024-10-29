@@ -17,12 +17,12 @@ What I want:
 - [x] Rules screen
 - [x] Draw board*
 - [x] Draw pieces*
-- [ ] Update pieces*
+- [x] Update pieces*
  
 ## Input
 - [x] Main menu
 - [ ] Choose color
-- [ ] Move pieces
+- [x] Move pieces
 - [ ] Pawn upgrade
 - [ ] Tie offer
 

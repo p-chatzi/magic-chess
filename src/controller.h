@@ -7,6 +7,7 @@ void boot_magic_chess();
 void start_game(board_s *board);
 void load_game(board_s *board);
 void reset_board(board_s *board);
-void decipher_move(board_s *board, int player_move[7]);
+int get_piece_id(const char *name);
+int get_row_id(const char *name);
 
 #endif

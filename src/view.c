@@ -12,19 +12,23 @@ int choose_main_menu()
 
 void print_board(board_s *board)
 {
-    print_test_pieces(&board->player[WHITE], WHITE);
-    print_test_pieces(&board->player[BLACK], BLACK);
+    printf("\n  ");
+    for (int col = 0; col < NUM_COL; col++)
+        printf("    %d", col);
+    printf("\n____________________________________________");
 
     for (int x = 0; x < NUM_ROW; x++)
     {
-        printf("\n\n");
+        printf("\n   \n");
+        printf("%c | ", 97 + x);
+
         for (int y = 0; y < NUM_COL; y++)
         {
             bool was_piece_found = 0;
-            piece_type_e piece_found = PAWN;
+            piece_type_e piece_found = PAWN0;
             player_e player_found = WHITE;
 
-            for (piece_type_e piece = PAWN; piece < NUM_PIECES; piece++)
+            for (piece_type_e piece = PAWN0; piece < NUM_PIECES; piece++)
             {
                 for (player_e color = WHITE; color < NUM_PLAYERS; color++)
                 {
@@ -44,6 +48,7 @@ void print_board(board_s *board)
             else
                 printf(".... ");
         }
+        printf("\n____________________________________________");
     }
 }
 
@@ -58,11 +63,16 @@ void print_test_pieces(pieces_s *pieces, player_e player)
     }
 }
 
-void get_player_choice(int player_move[4])
+int get_player_choice(char *player_move)
 {
-    printf("\nEnter your move (enter after each int): ");
-    for (int i = 0; i < 4; i++)
-        scanf("%d", &player_move[i]);
+    int exit_game = 1;
+    printf("\n\nEnter 0 if you want to exit game : ");
+    scanf("%d", &exit_game);
+    if (exit_game == 0)
+        return 1;
+    printf("\nEnter your move (piece-row-col) : ");
+    scanf(" %19s", player_move);
+    return 0;
 }
 
 void print_main_menu()
@@ -76,7 +86,7 @@ void print_main_menu()
     printf("⣿        4. Settings            ⣿\n");
     printf("⣿        5. Exit                ⣿\n");
     printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
-    printf("  Please choose 1 to 5: \n");
+    printf("  Please choose 1 to 5: ");
 }
 
 void print_byecat()

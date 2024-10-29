@@ -5,7 +5,7 @@
 
 int choose_main_menu();
 void print_board();
-void get_player_choice();
+int get_player_choice(char *player_move);
 
 void print_main_menu();
 void print_byecat();
