@@ -53,6 +53,7 @@ typedef enum
     e,
     f,
     g,
+    h,
 
     NUM_ROW
 } row_name_e;
@@ -77,7 +78,6 @@ typedef struct pieces
     piece_type_e piece_type;
     position_s pos;
     bool is_alive;
-    int id;
 } pieces_s;
 
 bool has_live_piece_at(const pieces_s *p, position_s pos);
