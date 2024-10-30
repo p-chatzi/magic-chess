@@ -1,0 +1,109 @@
+[ THEORY LEARN ]
+- How does the compiler know where to stop printf
+	. Adds /0 (NULL) terminator at the end of the string to print.
+	. Automatically added when using "quotes"
+	. Automatically added when array has one last spot 
+		.. char blabla[20] but only 19chars left
+	! If no null terminator found, will printf until next null terminator found!
+
+- How does the compiler know where to return after a fonction call
+	. Call stack (adds a symbol in the stack, which points to where the caller is)
+
+- Buffer overflow
+	. How it can screw up call stack
+		.. If user inputs more chars than we can take, buffer is overflowed
+		.. Attackers can manipulate what the call stack will do
+	. Always control user input
+ 
+- Enum
+	. List of ints, that can be used globally.
+		.. Starts at 0 unless specified
+		.. Add NUM_WHATEVER at the end to show how many there is ;)
+	typedef enum{
+		RED, // = 0
+		GREEN, // = 1
+		BLUE, // = 2
+
+		NUM_COLORS // there is 3 different colors
+	}color_id_e; 
+
+- View, Model, Controller
+	. View = IO, input outputs 		(what's displayed)
+	. Model = Structure of the code 	(structs, enums, fonctions models)
+	. Controller = Logic of the code 	(what's done in the background)
+
+- Naming
+	. Fonctions do things so they are verbs
+	. Bools are true or false so they start by is_
+	. Variables are not to be abbreviated, nor have implicit meaning. 
+
+- Header files
+	. Guards : #ifndef (if not defined) -> #define {code here} #endif
+		.. If header file was already copied, it won't be again
+	. Only used for fonctions that can be used in other files (public)
+
+- public vs private
+	. In .c, local fonctions go to the top and "global" go underneath
+		.. The publics are defined in .h anyways
+		.. Local    : What is only used in this file
+		.. Globlal  : What is used (potentially) in other files	
+		.. Local and global here are just my wording teehee :P
+
+[ PRACTICE ]
+- Bool 
+	. Returning bools is very handy!
+	. true = 0, false = anything else (although 1 is standard)
+
+- Loops
+	. continue; Go to next iteration
+	. break; Ignore rest of iteration and exit it
+ 	. while(1) for infinite loop
+
+- Returning values
+	. Return by pointer (to return multiple variables and error handling)
+	. Return the formula itself instead of bothering with variable and returning var. 
+
+- Git
+	. Local vs remote (everything before git push is local)
+	. Checkout / branch allows to work on different branches
+		.. Directory is updated to match the branch automatically!
+	. git add -A, to add all files from everything in current location.
+		.. git add . only adds files in current directory, not sub-directories
+	. .gitignore, just write what to ignore inside it (like out/)
+		.. You want to ignore output files, as they contain binaries of pc
+	. git message -m "There can only be 50chars max here"
+		.. message can have a body with more characters, that is only the header	
+	. Can't screw up much until git push
+
+- Working state is priotiy
+	. Even if not cleanest / most optimized
+	. 1st time writting code never the best implimentation
+
+- Maping
+	. Using array of struct to map/link ids and strings
+
+- Fonctions
+	. One fonction = one responsability
+		.. One calculation
+		.. One input 
+		.. ...
+
+- Markdown
+	. #, ##, ### for headers
+	. [ ] For a checklist (unchecked) [x] (checked)
+	. - For a list
+	. Can be previewed in VScode, slow though
+	. Easily have a clean output
+	. Markdown is .md. README are in caps. README.md
+
+- AI (use cases)
+	. Incredible to save time with output stuff
+	. Debugging life-saver 
+		.. a/ Send it error messages to understand them
+		.. b/ After debugging, hand-testing/printing. 
+		      ask why it thinks my code doesn't work.
+	. Check for logic loopholes
+	. Ascii art generator (mixed bag but saves time)
+	. Quick reasearches
+
+likely much more :)

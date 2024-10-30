@@ -15,11 +15,11 @@ void boot_magic_chess()
         print_main_menu();
 
         switch (choose_main_menu())
-        {
+        {   
         case START:
             start_game(&board);
             continue;
-
+    
         case LOAD:
             load_game(&board);
             continue;
