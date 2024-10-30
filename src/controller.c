@@ -49,28 +49,13 @@ void start_game(board_s *board)
     print_board(board);
 
     int current_player = WHITE;
-    bool is_game_finished = false;
     while (1)
     {
-        char player_move[20], *selected_piece, *row, *col;
-        int x, y, piece_id;
-        is_game_finished = get_player_choice(player_move);
+        char player_move[20];
+        get_player_choice(player_move);
+        bool is_game_finished = player_moves_piece(board, current_player, player_move);
         if (is_game_finished == true)
             break;
-
-        selected_piece = strtok(player_move, "-");
-        row = strtok(NULL, "-");
-        col = strtok(NULL, "-");
-
-        piece_id = get_piece_id(selected_piece);
-        x = get_row_id(row);
-        y = atoi(col);
-
-        printf("\nPiece:%s with id:%d \nRow:%s w/ id:%d \nCol:%s w/ id:%d", selected_piece, piece_id, row, x, col, y);
-
-        board->player[current_player][piece_id].pos.x = x;
-        board->player[current_player][piece_id].pos.y = y;
-
         print_board(board);
 
         if (current_player == WHITE)
@@ -78,6 +63,29 @@ void start_game(board_s *board)
         else
             current_player = WHITE;
     }
+}
+
+int player_moves_piece(board_s *board, int current_player, char player_move[20])
+{
+    char *selected_piece, *row, *col;
+    int row_id, col_id, piece_id;
+
+    selected_piece = strtok(player_move, "-");
+    if (strcmp(selected_piece, "0") == EXIT)
+        return true;
+    col = strtok(NULL, "-");
+    row = strtok(NULL, "-");
+
+    piece_id = get_piece_id(selected_piece);
+    col_id = get_col_id(col);
+    row_id = atoi(row) - 1;
+
+    printf("\nPiece: %s, id: %d \nRow: %s w/ id: %d \nCol: %s w/ id: %d\n", selected_piece, piece_id, row, row_id, col, col_id);
+
+    board->player[current_player][piece_id].pos.x = row_id;
+    board->player[current_player][piece_id].pos.y = col_id;
+
+    return false;
 }
 
 int get_piece_id(const char *name)
@@ -92,13 +100,13 @@ int get_piece_id(const char *name)
     return -1;
 }
 
-int get_row_id(const char *name)
+int get_col_id(const char *name)
 {
     for (int i = 0; i < NUM_ROW; i++)
     {
-        if (strcasecmp(name, row_map[i].name) == 0)
+        if (strcasecmp(name, col_map[i].name) == 0)
         {
-            return row_map[i].id;
+            return col_map[i].id;
         }
     }
     return -1;
@@ -176,9 +184,9 @@ void reset_board(board_s *board)
         board->player[BLACK][i].is_alive = 1;
     }
 
-    for (int i = 0; i < NUM_ROW; i++)
+    for (int i = 0; i < NUM_COL; i++)
     {
-        row_map[i].id = i;
+        col_map[i].id = i;
     }
 }
 

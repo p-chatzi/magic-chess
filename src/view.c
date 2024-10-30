@@ -12,15 +12,14 @@ int choose_main_menu()
 
 void print_board(board_s *board)
 {
-    printf("\n  ");
-    for (int col = 0; col < NUM_COL; col++)
-        printf("    %d", col);
-    printf("\n____________________________________________");
+    printf("\n ");
+    for (int x = 0; x < NUM_COL; x++)
+        printf("    %c", 97 + x);
+    printf("\n____________________________________________\n");
 
     for (int x = 0; x < NUM_ROW; x++)
     {
-        printf("\n   \n");
-        printf("%c | ", 97 + x);
+        printf("  |\n%d | ", x + 1);
 
         for (int y = 0; y < NUM_COL; y++)
         {
@@ -48,7 +47,7 @@ void print_board(board_s *board)
             else
                 printf(".... ");
         }
-        printf("\n____________________________________________");
+        printf("\n__|_________________________________________\n");
     }
 }
 
@@ -63,16 +62,10 @@ void print_test_pieces(pieces_s *pieces, player_e player)
     }
 }
 
-int get_player_choice(char *player_move)
+void get_player_choice(char *player_move)
 {
-    int exit_game = 1;
-    printf("\n\nEnter 0 if you want to exit game : ");
-    scanf("%d", &exit_game);
-    if (exit_game == 0)
-        return 1;
-    printf("\nEnter your move (piece-row-col) : ");
-    scanf(" %19s", player_move);
-    return 0;
+    printf("\n\nEnter your move (0 to ragequit || piece#-col-row) : ");
+    scanf("%19s", player_move);
 }
 
 void print_main_menu()

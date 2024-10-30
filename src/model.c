@@ -28,7 +28,7 @@ const pieces_s piece_map[] = {
     {"queen", QUEEN},
     {"king", KING}};
 
-row_s row_map[] = {
+col_s col_map[] = {
     {"a", a},
     {"b", b},
     {"c", c},

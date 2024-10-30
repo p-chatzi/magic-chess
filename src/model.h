@@ -15,7 +15,8 @@ typedef enum player
 
 typedef enum menu
 {
-    START = 1,
+    EXIT,
+    START,
     LOAD,
     RULES,
     SETTINGS,
@@ -56,13 +57,13 @@ typedef enum
     h,
 
     NUM_ROW
-} row_name_e;
+} col_name_e;
 
 typedef struct
 {
     char name[2];
     int id;
-} row_s;
+} col_s;
 
 typedef struct pos
 {
@@ -89,6 +90,6 @@ typedef struct board
 
 extern const pieces_s piece_map[];
 
-extern row_s row_map[];
+extern col_s col_map[];
 
 #endif
