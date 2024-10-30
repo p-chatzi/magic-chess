@@ -74,6 +74,8 @@
 	. git message -m "There can only be 50chars max here"
 		.. message can have a body with more characters, that is only the header	
 	. Can't screw up much until git push
+	. Tags and realeases
+		.. Not much to say for now, first time using them though ^^
 
 - Working state is priotiy
 	. Even if not cleanest / most optimized
@@ -105,5 +107,14 @@
 	. Check for logic loopholes
 	. Ascii art generator (mixed bag but saves time)
 	. Quick reasearches
+
+- vim
+	. o, jump line and enter insert
+	. dw, delete word
+	. dd, deletwe row
+	. $, jump to end of line
+	. w/W, jump to start/end of next word
+	. 0, jump to start of line
+	. b/B, back one word (start/end)
 
 likely much more :)
