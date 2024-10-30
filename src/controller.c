@@ -49,13 +49,16 @@ void start_game(board_s *board)
     print_board(board);
 
     int current_player = WHITE;
+    bool is_game_finished = false;
     while (1)
     {
-        char player_move[20];
+        char player_move[20], list_id[3];
         get_player_choice(player_move);
-        bool is_game_finished = player_moves_piece(board, current_player, player_move);
+        is_game_finished = tokenise_player_choice(player_move, list_id);
+        update_piece(board, current_player, list_id);
         if (is_game_finished == true)
             break;
+
         print_board(board);
 
         if (current_player == WHITE)
@@ -65,10 +68,9 @@ void start_game(board_s *board)
     }
 }
 
-int player_moves_piece(board_s *board, int current_player, char player_move[20])
+bool tokenise_player_choice(char *player_move, char *list_id)
 {
     char *selected_piece, *row, *col;
-    int row_id, col_id, piece_id;
 
     selected_piece = strtok(player_move, "-");
     if (strcmp(selected_piece, "0") == EXIT)
@@ -76,16 +78,18 @@ int player_moves_piece(board_s *board, int current_player, char player_move[20])
     col = strtok(NULL, "-");
     row = strtok(NULL, "-");
 
-    piece_id = get_piece_id(selected_piece);
-    col_id = get_col_id(col);
-    row_id = atoi(row) - 1;
+    list_id[0] = get_piece_id(selected_piece);
+    list_id[1] = atoi(row) - 1;
+    list_id[2] = get_col_id(col);
 
-    printf("\nPiece: %s, id: %d \nRow: %s w/ id: %d \nCol: %s w/ id: %d\n", selected_piece, piece_id, row, row_id, col, col_id);
-
-    board->player[current_player][piece_id].pos.x = row_id;
-    board->player[current_player][piece_id].pos.y = col_id;
-
+    printf("\nPiece: %s, id: %d \nRow: %s w/ id: %d \nCol: %s w/ id: %d\n", selected_piece, list_id[0], row, list_id[1], col, list_id[2]);
     return false;
+}
+
+void update_piece(board_s *board, int current_player, char *list_id)
+{
+    board->player[current_player][(int)list_id[0]].pos.x = list_id[1];
+    board->player[current_player][(int)list_id[0]].pos.y = list_id[2];
 }
 
 int get_piece_id(const char *name)
