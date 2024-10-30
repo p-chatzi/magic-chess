@@ -57,20 +57,56 @@ void start_game(board_s *board)
         is_game_finished = tokenise_player_choice(player_move, list_id);
         if (is_game_finished)
             break;
+
+        // bool is_move_valid = is_piece_movement_valid(board, list_id, current_player);
+
+        bool is_piece_alive = is_piece_selected_alive(board, list_id, current_player);
+        if (!is_piece_alive)
+        {
+            printf("\nCette piece as ete capturer, choisi en un encore disponible");
+            continue;
+        }
         bool is_cell_available = is_cell_occupied_by_ally(board, list_id, current_player);
         if (is_cell_available)
         {
             printf("\nCannot move on top of your own piece");
             continue;
         }
+        capture_enemy_piece(board, list_id, current_player);
 
         update_piece(board, current_player, list_id);
         print_board(board);
-
         if (current_player == WHITE)
             current_player = BLACK;
         else
             current_player = WHITE;
+    }
+}
+
+// bool is_piece_movement_valid(board_s *board, char *list_id, int current_player) {}
+
+bool is_piece_selected_alive(board_s *board, char *list_id, int current_player)
+{
+    if (board->player[current_player][(int)list_id[0]].is_alive == 0)
+        return false;
+    return true;
+}
+
+void capture_enemy_piece(board_s *board, char *list_id, int current_player)
+{
+    for (int pid = 0; pid < NUM_PIECES; pid++)
+    {
+        if (current_player == WHITE)
+        {
+            if (board->player[BLACK][pid].pos.x == list_id[1] &&
+                board->player[BLACK][pid].pos.y == list_id[2])
+                board->player[BLACK][pid].is_alive = 0;
+        }
+        else if (board->player[WHITE][pid].pos.x == list_id[1] &&
+                 board->player[WHITE][pid].pos.y == list_id[2])
+            board->player[WHITE][pid].is_alive = 0;
+        {
+        }
     }
 }
 
@@ -85,18 +121,6 @@ bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
             if ((int)list_id[0] != pid)
                 return true;
         }
-
-        // if (board->player[WHITE][(int)list_id[0]].pos.x == x && board->player[WHITE][(int)list_id[0]].pos.y == y)
-        // {
-        //     if (board->player[BLACK][pid].is_alive == true && board->player[BLACK][pid].piece_type != KING)
-        //         board->player[BLACK][pid].is_alive = 0;
-        // }
-
-        // if (board->player[BLACK][(int)list_id[0]].pos.x == x && board->player[BLACK][(int)list_id[0]].pos.y == y)
-        // {
-        //     if (board->player[WHITE][pid].is_alive == true && board->player[WHITE][pid].piece_type != KING)
-        //         board->player[WHITE][pid].is_alive = 0;
-        // }
     }
     return false;
 }
