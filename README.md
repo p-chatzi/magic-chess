@@ -27,8 +27,8 @@ What I want:
 - [ ] Tie offer
 
 ## Game engine / logic
-- [ ] Cell availability
-- [ ] Capture enemy pieces
+- [x] Cell availability
+- [x] Capture enemy pieces
 - [ ] Check pawn tranform possibility
 - [ ] Check check
 - [ ] Check checkmate
