@@ -55,10 +55,16 @@ void start_game(board_s *board)
         char player_move[20], list_id[3];
         get_player_choice(player_move);
         is_game_finished = tokenise_player_choice(player_move, list_id);
-        update_piece(board, current_player, list_id);
-        if (is_game_finished == true)
+        if (is_game_finished)
             break;
+        bool is_cell_available = is_cell_occupied_by_ally(board, list_id, current_player);
+        if (is_cell_available)
+        {
+            printf("\nCannot move on top of your own piece");
+            continue;
+        }
 
+        update_piece(board, current_player, list_id);
         print_board(board);
 
         if (current_player == WHITE)
@@ -66,6 +72,33 @@ void start_game(board_s *board)
         else
             current_player = WHITE;
     }
+}
+
+bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
+{
+
+    for (int pid = 0; pid < NUM_PIECES; pid++)
+    {
+        if (board->player[current_player][pid].pos.x == list_id[1] &&
+            board->player[current_player][pid].pos.y == list_id[2])
+        {
+            if ((int)list_id[0] != pid)
+                return true;
+        }
+
+        // if (board->player[WHITE][(int)list_id[0]].pos.x == x && board->player[WHITE][(int)list_id[0]].pos.y == y)
+        // {
+        //     if (board->player[BLACK][pid].is_alive == true && board->player[BLACK][pid].piece_type != KING)
+        //         board->player[BLACK][pid].is_alive = 0;
+        // }
+
+        // if (board->player[BLACK][(int)list_id[0]].pos.x == x && board->player[BLACK][(int)list_id[0]].pos.y == y)
+        // {
+        //     if (board->player[WHITE][pid].is_alive == true && board->player[WHITE][pid].piece_type != KING)
+        //         board->player[WHITE][pid].is_alive = 0;
+        // }
+    }
+    return false;
 }
 
 bool tokenise_player_choice(char *player_move, char *list_id)
