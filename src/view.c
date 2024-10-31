@@ -64,7 +64,7 @@ void print_test_pieces(pieces_s *pieces, player_e player)
 
 void get_player_choice(char *player_move)
 {
-    printf("\n\nEnter your move (0 to ragequit || piece#-col-row) : ");
+    printf("\n\nEnter your move (exit || save || piece#-col-row) : ");
     scanf("%19s", player_move);
 }
 
@@ -74,10 +74,11 @@ void print_main_menu()
     printf("⣿          Magic CHESS          ⣿\n");
     printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
     printf("⣿        1. Start New Game      ⣿\n");
-    printf("⣿        2. Invent Pieces       ⣿\n");
-    printf("⣿        3. Rules               ⣿\n");
-    printf("⣿        4. Settings            ⣿\n");
-    printf("⣿        5. Exit                ⣿\n");
+    printf("⣿        2. Load Game           ⣿\n");
+    printf("⣿        3. Invent Pieces       ⣿\n");
+    printf("⣿        4. Rules               ⣿\n");
+    printf("⣿        5. Settings            ⣿\n");
+    printf("⣿        0. Exit                ⣿\n");
     printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
     printf("  Please choose 1 to 5: ");
 }

@@ -18,14 +18,15 @@ typedef enum menu
     EXIT,
     START,
     LOAD,
+    INVENT,
     RULES,
-    SETTINGS,
-    QUIT
+    SETTINGS,   
+    SAVE
 } menu_options_e;
 
 typedef enum piece_type
 {
-    PAWN0 = 0,
+    PAWN0,
     PAWN1,
     PAWN2,
     PAWN3,

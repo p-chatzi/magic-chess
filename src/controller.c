@@ -10,18 +10,29 @@
 void boot_magic_chess()
 {
     board_s board;
+    FILE file;
     while (true)
     {
         print_main_menu();
 
         switch (choose_main_menu())
-        {   
+        {
         case START:
-            start_game(&board);
+            reset_board(&board);
+            start_game(&board, &file);
             continue;
-    
+
+        case SAVE:
+            save_game(&board, &file);
+            continue;
+
         case LOAD:
-            load_game(&board);
+            load_game(&board, &file);
+            start_game(&board, &file);
+            continue;
+
+        case INVENT:
+            print_hellowep();
             continue;
 
         case RULES:
@@ -32,7 +43,7 @@ void boot_magic_chess()
             print_settings();
             continue;
 
-        case QUIT:
+        case EXIT:
             print_byecat();
             return;
 
@@ -43,27 +54,29 @@ void boot_magic_chess()
     }
 }
 
-void start_game(board_s *board)
+void start_game(board_s *board, FILE *file)
 {
-    reset_board(board);
     print_board(board);
 
     int current_player = WHITE;
-    bool is_game_finished = false;
+    int player_order = START;
     while (1)
     {
         char player_move[20], list_id[3];
         get_player_choice(player_move);
-        is_game_finished = tokenise_player_choice(player_move, list_id);
-        if (is_game_finished)
+        player_order = tokenise_player_choice(player_move, list_id);
+        if (player_order == EXIT)
             break;
-
-        // bool is_move_valid = is_piece_movement_valid(board, list_id, current_player);
+        if (player_order == SAVE)
+        {
+            save_game(board, file);
+            continue;
+        }
 
         bool is_piece_alive = is_piece_selected_alive(board, list_id, current_player);
         if (!is_piece_alive)
         {
-            printf("\nCette piece as ete capturer, choisi en un encore disponible");
+            printf("\nThis piece has been captured, choose that is still alive");
             continue;
         }
         bool is_cell_available = is_cell_occupied_by_ally(board, list_id, current_player);
@@ -82,8 +95,6 @@ void start_game(board_s *board)
             current_player = WHITE;
     }
 }
-
-// bool is_piece_movement_valid(board_s *board, char *list_id, int current_player) {}
 
 bool is_piece_selected_alive(board_s *board, char *list_id, int current_player)
 {
@@ -125,13 +136,15 @@ bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
     return false;
 }
 
-bool tokenise_player_choice(char *player_move, char *list_id)
+int tokenise_player_choice(char *player_move, char *list_id)
 {
     char *selected_piece, *row, *col;
 
     selected_piece = strtok(player_move, "-");
-    if (strcmp(selected_piece, "0") == EXIT)
-        return true;
+    if (strcmp(selected_piece, "exit") == 0)
+        return EXIT;
+    if (strcmp(selected_piece, "save") == 0)
+        return SAVE;
     col = strtok(NULL, "-");
     row = strtok(NULL, "-");
 
@@ -140,7 +153,7 @@ bool tokenise_player_choice(char *player_move, char *list_id)
     list_id[2] = get_col_id(col);
 
     printf("\nPiece: %s, id: %d \nRow: %s w/ id: %d \nCol: %s w/ id: %d\n", selected_piece, list_id[0], row, list_id[1], col, list_id[2]);
-    return false;
+    return 1;
 }
 
 void update_piece(board_s *board, int current_player, char *list_id)
@@ -251,7 +264,69 @@ void reset_board(board_s *board)
     }
 }
 
-void load_game(board_s *board)
+void save_game(board_s *board, FILE *file)
 {
-    print_hellowep();
+    file = fopen("saved_game", "w");
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        return;
+    }
+
+    fprintf(file, "haha-");
+
+    for (int piece = PAWN0; piece < NUM_PIECES; piece++)
+    {
+        fprintf(file, "%u-%u-%d-%d-",
+                board->player[WHITE][piece].piece_type,
+                board->player[WHITE][piece].pos.x,
+                board->player[WHITE][piece].pos.y,
+                board->player[WHITE][piece].is_alive);
+
+        fprintf(file, "%u-%u-%d-%d-",
+                board->player[BLACK][piece].piece_type,
+                board->player[BLACK][piece].pos.x,
+                board->player[BLACK][piece].pos.y,
+                board->player[BLACK][piece].is_alive);
+    }
+
+    fclose(file);
+}
+
+void load_game(board_s *board, FILE *file)
+{
+    file = fopen("saved_game", "r");
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        return;
+    }
+    char buffer[500];
+    while (fgets(buffer, sizeof(buffer), file) != NULL)
+    {
+        printf(" %s", buffer);
+    }
+    printf("\nFormat is the following : piece_type-x-y-alive");
+
+    set_board_from_save(board, buffer);
+    start_game(board, file);
+    fclose(file);
+}
+
+void set_board_from_save(board_s *board, char *buffer)
+{
+    char *empty_first_token = strtok(buffer, "-");
+    printf(" %s", empty_first_token);
+    for (int piece = PAWN0; piece < NUM_PIECES; piece++)
+    {
+        board->player[WHITE][piece].piece_type = atoi(strtok(NULL, "-"));
+        board->player[WHITE][piece].pos.x = atoi(strtok(NULL, "-"));
+        board->player[WHITE][piece].pos.y = atoi(strtok(NULL, "-"));
+        board->player[WHITE][piece].is_alive = atoi(strtok(NULL, "-"));
+
+        board->player[BLACK][piece].piece_type = atoi(strtok(NULL, "-"));
+        board->player[BLACK][piece].pos.x = atoi(strtok(NULL, "-"));
+        board->player[BLACK][piece].pos.y = atoi(strtok(NULL, "-"));
+        board->player[BLACK][piece].is_alive = atoi(strtok(NULL, "-"));
+    }
 }

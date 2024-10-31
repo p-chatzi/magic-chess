@@ -1,5 +1,5 @@
 #Variables
-FLAGS := -Wall -g -O0
+FLAGS := -Wall -Werror -g -O0
 
 default: run
 
