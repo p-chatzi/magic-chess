@@ -29,6 +29,7 @@ What I want:
 ## Game engine / logic
 - [x] Cell availability
 - [x] Capture enemy pieces
+- [x] Save and load a game
 - [ ] Check pawn tranform possibility
 - [ ] Check check
 - [ ] Check checkmate

@@ -117,4 +117,19 @@
 	. 0, jump to start of line
 	. b/B, back one word (start/end)
 
+- files in c
+	. fopen(1,2); read, write or/and append a file (text or binary)
+		.. 1 : file name, string
+		.. 2 : "file mode", read(r), w(write), a(append)...
+		.. Returns : Pointer to the file
+	. read mode requires the file to exist
+	. make sure that file is properly opened, and closed
+	. fclose(pointer_to_file);
+	. multiple methods to write into file
+		.. fgets(1,2,3); Write data into something
+			... 1 : Where the data will be stored
+			... 2 : Limit the data you can sed
+			... 3 : The data itself
+		.. (see online for other options)
+
 likely much more :)
