@@ -72,6 +72,13 @@ void start_game(board_s *board, FILE *file, int current_player)
             continue;
         }
 
+        piece_movement_validity(list_id, board, current_player);
+        if (!is_pawn_move_legal(list_id, board, current_player))
+        {
+            printf("\nPawn move invalid");
+            continue;
+        }
+
         if (!is_piece_selected_alive(board, list_id, current_player))
         {
             printf("\nThis piece has been captured, choose that is still alive");
@@ -102,7 +109,7 @@ bool is_piece_selected_alive(board_s *board, char *list_id, int current_player)
 
 void capture_enemy_piece(board_s *board, char *list_id, int current_player)
 {
-    for (int pid = 0; pid < NUM_PIECES; pid++)
+    for (int pid = PAWN0; pid < NUM_PIECES; pid++)
     {
         if (current_player == WHITE)
         {
@@ -121,7 +128,7 @@ void capture_enemy_piece(board_s *board, char *list_id, int current_player)
 bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
 {
 
-    for (int pid = 0; pid < NUM_PIECES; pid++)
+    for (int pid = PAWN0; pid < NUM_PIECES; pid++)
     {
         if (board->player[current_player][pid].pos.x == list_id[1] &&
             board->player[current_player][pid].pos.y == list_id[2])
@@ -161,7 +168,7 @@ void update_piece(board_s *board, int current_player, char *list_id)
 
 int get_piece_id(const char *name)
 {
-    for (int i = 0; i < NUM_PIECES; i++)
+    for (int i = PAWN0; i < NUM_PIECES; i++)
     {
         if (strcasecmp(name, piece_map[i].name) == 0)
         {
@@ -328,4 +335,62 @@ void set_board_from_save(board_s *board, char *buffer, int *current_player)
         board->player[BLACK][piece].pos.y = atoi(strtok(NULL, "-"));
         board->player[BLACK][piece].is_alive = atoi(strtok(NULL, "-"));
     }
+}
+
+void piece_movement_validity(char *list_id, board_s *board, int current_player)
+{
+    for (int pid = PAWN0; pid < ROOK8; pid++)
+    {
+        if (list_id[0] == pid)
+            is_pawn_move_legal(list_id, board, current_player);
+    }
+    // if (list_id[0] == ROOK8 || list_id[0] == ROOK9)
+    // return is_rook_move_legal(board, list_id, current_player);
+    // if (list_id[0] == KNIGHT10 || list_id[0] == KNIGHT11)
+    // return is_knight_move_legal(board, list_id, current_player);
+    // if (list_id[0] == BISHOP12 || list_id[0] == BISHOP13)
+    // return is_bishop_move_legal(board, list_id, current_player);
+    // if (list_id[0] == QUEEN)
+    // return is_queen_move_legal(board, list_id, current_player);
+    // if (list_id[0] == KING)
+    // return is_king_move_legal(board, list_id, current_player);
+    return;
+}
+
+bool is_pawn_move_legal(char *list_id, board_s *board, int current_player)
+{
+    int pawn_id = (int)list_id[0];
+    int target_row = list_id[1];
+    int target_col = list_id[1];
+    int current_row = board->player[current_player][pawn_id].pos.x;
+    int current_col = board->player[current_player][pawn_id].pos.y;
+
+    if (target_col != current_col)
+    {
+        printf("\nInvalid pawn move (cannot move column without capturing enemy)");
+        return false;
+    }
+
+    int direction = (current_player == WHITE) ? 1 : -1;
+
+    // Check if it's the pawn's first move
+    bool is_first_move = (current_player == WHITE && current_row == 1) ||
+                         (current_player == BLACK && current_row == 6);
+
+    // Check for two square move (only on first move)
+    if (is_first_move && target_row == current_row + (2 * direction))
+    {
+        if (!is_cell_occupied_by_ally(board, list_id, current_player) &&
+            !is_cell_occupied_by_ally(board, list_id, current_player))
+            return true;
+    }
+
+    // Check for one square move
+    if (target_row == current_row + direction)
+    {
+        if (!is_cell_occupied_by_ally(board, list_id, current_player))
+            return true;
+    }
+
+    return false;
 }
