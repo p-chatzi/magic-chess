@@ -34,6 +34,12 @@ What I want:
 - [ ] Check check
 - [ ] Check checkmate
 - [ ] Pieces movement patterns
+    - [x] Pawn
+    - [-] Rook
+    - [ ] Knight
+    - [ ] Bishop
+    - [ ] Queen
+    - [ ] King
 <br> </br>
 
 # Take me to the moon 🎵🎵
