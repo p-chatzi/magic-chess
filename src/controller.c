@@ -361,17 +361,22 @@ bool is_pawn_move_legal(char *list_id, board_s *board, int current_player)
 {
     int pawn_id = (int)list_id[0];
     int target_row = list_id[1];
-    int target_col = list_id[1];
+    int target_col = list_id[2];
     int current_row = board->player[current_player][pawn_id].pos.x;
     int current_col = board->player[current_player][pawn_id].pos.y;
+    int direction = (current_player == WHITE) ? 1 : -1;
+
+    // dinner time!
+    if ((target_col == current_col - 1 && target_col >= a && target_row == current_row + direction) ||
+        (target_col == current_col + 1 && target_col <= h && target_row == current_row + direction))
+        if (!is_cell_occupied_by_ally(board, list_id, current_player))
+            return true;
 
     if (target_col != current_col)
     {
         printf("\nInvalid pawn move (cannot move column without capturing enemy)");
         return false;
     }
-
-    int direction = (current_player == WHITE) ? 1 : -1;
 
     // Check if it's the pawn's first move
     bool is_first_move = (current_player == WHITE && current_row == 1) ||
