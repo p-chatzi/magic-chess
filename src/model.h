@@ -20,7 +20,7 @@ typedef enum menu
     LOAD,
     INVENT,
     RULES,
-    SETTINGS,   
+    SETTINGS,
     SAVE
 } menu_options_e;
 
@@ -46,7 +46,16 @@ typedef enum piece_type
     NUM_PIECES
 } piece_type_e;
 
-typedef enum
+typedef enum player_choice
+{
+    PIECE_ID,
+    ROW_ID,
+    COL_ID,
+
+    NB_INPUTS
+} player_choice_e;
+
+typedef enum col_name
 {
     a,
     b,
@@ -60,7 +69,7 @@ typedef enum
     NUM_ROW
 } col_name_e;
 
-typedef struct
+typedef struct col
 {
     char name[2];
     int id;

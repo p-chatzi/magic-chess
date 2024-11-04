@@ -33,7 +33,7 @@ void boot_magic_chess()
             continue;
 
         case INVENT:
-            print_hellowep();
+            print_wip();
             continue;
 
         case RULES:
@@ -61,7 +61,7 @@ void start_game(board_s *board, FILE *file, int current_player)
     int player_choice = START;
     while (1)
     {
-        char player_move[20], list_id[3];
+        char player_move[20], list_id[NB_INPUTS];
         get_player_choice(player_move);
         player_choice = tokenise_player_choice(player_move, list_id);
         if (player_choice == EXIT)
@@ -72,12 +72,8 @@ void start_game(board_s *board, FILE *file, int current_player)
             continue;
         }
 
-        piece_movement_validity(list_id, board, current_player);
-        if (!is_pawn_move_legal(list_id, board, current_player))
-        {
-            printf("\nPawn move invalid");
+        if (!piece_movement_validity(board, list_id, current_player))
             continue;
-        }
 
         if (!is_piece_selected_alive(board, list_id, current_player))
         {
@@ -102,7 +98,7 @@ void start_game(board_s *board, FILE *file, int current_player)
 
 bool is_piece_selected_alive(board_s *board, char *list_id, int current_player)
 {
-    if (board->player[current_player][(int)list_id[0]].is_alive == 0)
+    if (board->player[current_player][(int)list_id[PIECE_ID]].is_alive == 0)
         return false;
     return true;
 }
@@ -113,12 +109,12 @@ void capture_enemy_piece(board_s *board, char *list_id, int current_player)
     {
         if (current_player == WHITE)
         {
-            if (board->player[BLACK][pid].pos.x == list_id[1] &&
-                board->player[BLACK][pid].pos.y == list_id[2])
+            if (board->player[BLACK][pid].pos.x == list_id[ROW_ID] &&
+                board->player[BLACK][pid].pos.y == list_id[COL_ID])
                 board->player[BLACK][pid].is_alive = 0;
         }
-        else if (board->player[WHITE][pid].pos.x == list_id[1] &&
-                 board->player[WHITE][pid].pos.y == list_id[2])
+        else if (board->player[WHITE][pid].pos.x == list_id[ROW_ID] &&
+                 board->player[WHITE][pid].pos.y == list_id[COL_ID])
             board->player[WHITE][pid].is_alive = 0;
         {
         }
@@ -130,8 +126,8 @@ bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
 
     for (int pid = PAWN0; pid < NUM_PIECES; pid++)
     {
-        if (board->player[current_player][pid].pos.x == list_id[1] &&
-            board->player[current_player][pid].pos.y == list_id[2])
+        if (board->player[current_player][pid].pos.x == list_id[ROW_ID] &&
+            board->player[current_player][pid].pos.y == list_id[COL_ID])
         {
             if ((int)list_id[0] != pid)
                 return true;
@@ -162,8 +158,8 @@ int tokenise_player_choice(char *player_move, char *list_id)
 
 void update_piece(board_s *board, int current_player, char *list_id)
 {
-    board->player[current_player][(int)list_id[0]].pos.x = list_id[1];
-    board->player[current_player][(int)list_id[0]].pos.y = list_id[2];
+    board->player[current_player][(int)list_id[PIECE_ID]].pos.x = list_id[ROW_ID];
+    board->player[current_player][(int)list_id[PIECE_ID]].pos.y = list_id[COL_ID];
 }
 
 int get_piece_id(const char *name)
@@ -337,15 +333,15 @@ void set_board_from_save(board_s *board, char *buffer, int *current_player)
     }
 }
 
-void piece_movement_validity(char *list_id, board_s *board, int current_player)
+bool piece_movement_validity(board_s *board, char *list_id, int current_player)
 {
     for (int pid = PAWN0; pid < ROOK8; pid++)
     {
-        if (list_id[0] == pid)
-            is_pawn_move_legal(list_id, board, current_player);
+        if (list_id[PIECE_ID] == pid)
+            return is_pawn_move_legal(board, list_id, current_player);
     }
-    // if (list_id[0] == ROOK8 || list_id[0] == ROOK9)
-    // return is_rook_move_legal(board, list_id, current_player);
+    if (list_id[PIECE_ID] == ROOK8 || list_id[0] == ROOK9)
+        return is_rook_move_legal(board, list_id, current_player);
     // if (list_id[0] == KNIGHT10 || list_id[0] == KNIGHT11)
     // return is_knight_move_legal(board, list_id, current_player);
     // if (list_id[0] == BISHOP12 || list_id[0] == BISHOP13)
@@ -354,14 +350,102 @@ void piece_movement_validity(char *list_id, board_s *board, int current_player)
     // return is_queen_move_legal(board, list_id, current_player);
     // if (list_id[0] == KING)
     // return is_king_move_legal(board, list_id, current_player);
-    return;
+
+    printf("\nValidity could not be verified");
+    return false;
 }
 
-bool is_pawn_move_legal(char *list_id, board_s *board, int current_player)
+bool is_row_blocked(board_s *board, char *list_id, int current_player)
 {
-    int pawn_id = (int)list_id[0];
-    int target_row = list_id[1];
-    int target_col = list_id[2];
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
+
+    for (int i = PAWN0; i < NUM_PIECES; i++)
+    {
+        int direction = (target_row > current_row) ? 1 : -1;
+        for (int row_i = 1; row_i < (direction * target_row) - (direction * current_row); row_i++)
+        {
+            if (board->player[WHITE][i].pos.x == current_row + (direction * row_i) &&
+                target_col == board->player[WHITE][(int)list_id[PIECE_ID]].pos.y)
+            {
+                printf("\nRow blocked by white");
+                return true;
+            }
+            if (board->player[BLACK][i].pos.x == current_row + (direction * row_i) &&
+                target_col == board->player[BLACK][(int)list_id[PIECE_ID]].pos.y)
+            {
+                printf("\nRow blocked by black");
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool is_col_blocked(board_s *board, char *list_id, int current_player)
+{
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
+
+    for (int i = PAWN0; i < NUM_PIECES; i++)
+    {
+        int direction = (target_col > current_col) ? 1 : -1;
+        for (int col_i = 1; col_i < (direction * target_col) - (direction * current_col); col_i++)
+        {
+            if (board->player[WHITE][i].pos.x == current_col + (direction * col_i) &&
+                target_row == board->player[WHITE][(int)list_id[PIECE_ID]].pos.y)
+            {
+                printf("\nCol blocked by white");
+                return true;
+            }
+            if (board->player[BLACK][i].pos.x == current_col + (direction * col_i) &&
+                target_row == board->player[BLACK][(int)list_id[PIECE_ID]].pos.y)
+            {
+                printf("\nCol blocked by black");
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
+{
+    int rook_id = (int)list_id[PIECE_ID];
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_row = board->player[current_player][rook_id].pos.x;
+    int current_col = board->player[current_player][rook_id].pos.y;
+
+    // It's a trap! If you stay on same col/row -> it means that you moved in that col/row
+    if (!is_col_blocked(board, list_id, current_player))
+    {
+        if (target_col == current_col && target_row != current_row)
+        {
+            if (!is_cell_occupied_by_ally(board, list_id, current_player))
+                return true;
+        }
+    }
+    if (!is_row_blocked(board, list_id, current_player))
+    {
+        if (target_col != current_col && target_row == current_row)
+        {
+            if (!is_cell_occupied_by_ally(board, list_id, current_player))
+                return true;
+        }
+    }
+
+    printf("\nInvalid rook move");
+    return false;
+}
+
+bool is_pawn_move_legal(board_s *board, char *list_id, int current_player)
+{
+    int pawn_id = (int)list_id[PIECE_ID];
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
     int current_row = board->player[current_player][pawn_id].pos.x;
     int current_col = board->player[current_player][pawn_id].pos.y;
     int direction = (current_player == WHITE) ? 1 : -1;
@@ -371,7 +455,6 @@ bool is_pawn_move_legal(char *list_id, board_s *board, int current_player)
         (target_col == current_col + 1 && target_col <= h && target_row == current_row + direction))
         if (!is_cell_occupied_by_ally(board, list_id, current_player))
             return true;
-
     if (target_col != current_col)
     {
         printf("\nInvalid pawn move (cannot move column without capturing enemy)");
@@ -397,5 +480,6 @@ bool is_pawn_move_legal(char *list_id, board_s *board, int current_player)
             return true;
     }
 
+    printf("\nInvalid pawn move");
     return false;
 }

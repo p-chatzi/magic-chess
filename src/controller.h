@@ -11,14 +11,23 @@ int get_piece_id(const char *name);
 int get_col_id(const char *name);
 int tokenise_player_choice(char *player_move, char *list_id);
 void update_piece(board_s *board, int current_player, char *list_id);
+
 bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player);
 void capture_enemy_piece(board_s *board, char *list_id, int current_player);
 bool is_piece_selected_alive(board_s *board, char *list_id, int current_player);
+
 void save_game(board_s *board, FILE *file, int current_player);
 void load_game(board_s *board, FILE *file, int current_player);
 void set_board_from_save(board_s *board, char *buffer, int *current_player);
 
-void piece_movement_validity(char *list_id, board_s *board, int current_player);
-bool is_pawn_move_legal(char *list_id, board_s *board, int current_player);
+bool piece_movement_validity(board_s *board, char *list_id, int current_player);
+bool is_pawn_move_legal(board_s *board, char *list_id, int current_player);
+bool is_rook_move_legal(board_s *board, char *list_id, int current_player);
+// bool is_knight_move_legal(board_s *board, char *list_id, int current_player);
+// bool is_bishop_move_legal(board_s *board, char *list_id, int current_player);
+// bool is_queen_move_legal(board_s *board, char *list_id, int current_player);
+// bool is_king_move_legal(board_s *board, char *list_id, int current_player);
+bool is_row_blocked(board_s *board, char *list_id, int current_player);
+bool is_col_blocked(board_s *board, char *list_id, int current_player);
 
 #endif
