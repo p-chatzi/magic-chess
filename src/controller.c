@@ -72,9 +72,6 @@ void start_game(board_s *board, FILE *file, int current_player)
             continue;
         }
 
-        if (!piece_movement_validity(board, list_id, current_player))
-            continue;
-
         if (!is_piece_selected_alive(board, list_id, current_player))
         {
             printf("\nThis piece has been captured, choose that is still alive");
@@ -85,6 +82,9 @@ void start_game(board_s *board, FILE *file, int current_player)
             printf("\nCannot move on top of your own piece");
             continue;
         }
+
+        if (!piece_movement_validity(board, list_id, current_player))
+            continue;
         capture_enemy_piece(board, list_id, current_player);
 
         update_piece(board, current_player, list_id);
@@ -98,9 +98,7 @@ void start_game(board_s *board, FILE *file, int current_player)
 
 bool is_piece_selected_alive(board_s *board, char *list_id, int current_player)
 {
-    if (board->player[current_player][(int)list_id[PIECE_ID]].is_alive == 0)
-        return false;
-    return true;
+    return board->player[current_player][(int)list_id[PIECE_ID]].is_alive;
 }
 
 void capture_enemy_piece(board_s *board, char *list_id, int current_player)
@@ -369,12 +367,12 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
         if (list_id[PIECE_ID] == pid)
             return is_pawn_move_legal(board, list_id, current_player);
     }
-    if (list_id[PIECE_ID] == ROOK8 || list_id[0] == ROOK9)
+    if (list_id[PIECE_ID] == ROOK8 || list_id[PIECE_ID] == ROOK9)
         return is_rook_move_legal(board, list_id, current_player);
-    if (list_id[0] == KNIGHT10 || list_id[0] == KNIGHT11)
+    if (list_id[0] == KNIGHT10 || list_id[PIECE_ID] == KNIGHT11)
         return is_knight_move_legal(board, list_id, current_player);
-    // if (list_id[0] == BISHOP12 || list_id[0] == BISHOP13)
-    // return is_bishop_move_legal(board, list_id, current_player);
+    if (list_id[0] == BISHOP12 || list_id[PIECE_ID] == BISHOP13)
+        return is_bishop_move_legal(board, list_id, current_player);
     // if (list_id[0] == QUEEN)
     // return is_queen_move_legal(board, list_id, current_player);
     // if (list_id[0] == KING)
@@ -384,6 +382,11 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
     return false;
 }
 
+/*
+    Determines if a piece exists along the row path;
+    between the destination and current position
+    Returns : True if there is a piece blocking the path
+*/
 bool is_row_blocked(board_s *board, char *list_id, int current_player)
 {
     int target_row = list_id[ROW_ID];
@@ -412,6 +415,11 @@ bool is_row_blocked(board_s *board, char *list_id, int current_player)
     return false;
 }
 
+/*
+    Determines if a piece exists along the column path;
+    between the destination and current position
+    Returns : True if there is a piece blocking the path
+*/
 bool is_col_blocked(board_s *board, char *list_id, int current_player)
 {
     int target_row = list_id[ROW_ID];
@@ -440,6 +448,74 @@ bool is_col_blocked(board_s *board, char *list_id, int current_player)
     return false;
 }
 
+/*
+    Determines if a piece exists along the diagnol path;
+    between the destination and current position
+    Returns : True if there is a piece blocking the path
+*/
+bool is_diagonal_blocked(board_s *board, char *list_id, int current_player)
+{
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
+    int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
+
+    for (int i = PAWN0; i < NUM_PIECES; i++)
+    {
+        int col_direction = (target_col > current_col) ? 1 : -1;
+        int row_direction = (target_row > current_row) ? 1 : -1;
+
+        for (int row_move = -NUM_ROW; row_move < NUM_ROW; row_move) // - 7 to 7
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/*
+    Checks how the Bishop moves and to where.
+    Determines if the move is legal or not
+    Returns : True if the bishop is allowed to move to its destination
+*/
+bool is_bishop_move_legal(board_s *board, char *list_id, int current_player)
+{
+    int bishop_id = (int)list_id[PIECE_ID];
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_row = board->player[current_player][bishop_id].pos.x;
+    int current_col = board->player[current_player][bishop_id].pos.y;
+
+    for (int i = PAWN0; i < NUM_PIECES; i++)
+    {
+        int col_direction = (target_col > current_col) ? 1 : -1;
+        int row_direction = (target_row > current_row) ? 1 : -1;
+
+        if (target_col == target_row * row_direction &&
+            target_col >= a && target_col <= NUM_COL - 1 &&
+            target_row >= 0 && target_row <= NUM_ROW - 1)
+        {
+            return true;
+        }
+
+        if (target_row == target_col * col_direction &&
+            target_col >= a && target_col <= NUM_COL - 1 &&
+            target_row >= 0 && target_row <= NUM_ROW - 1)
+        {
+            return true;
+        }
+    }
+
+    printf("\nInvalid bishop move");
+    return false;
+}
+
+/*
+    Checks how the Knight moves and to where.
+    Determines if the move is legal or not
+    Returns : True if the Knight is allowed to move to its destination
+*/
 bool is_knight_move_legal(board_s *board, char *list_id, int current_player)
 {
     int knight_id = (int)list_id[PIECE_ID];
@@ -447,31 +523,33 @@ bool is_knight_move_legal(board_s *board, char *list_id, int current_player)
     int target_col = list_id[COL_ID];
     int current_col = board->player[current_player][knight_id].pos.y;
 
-    if (!is_cell_occupied_by_ally(board, list_id, current_player))
+    for (int row_move = -2; row_move <= 2; row_move++)
     {
-        for (int row_move = -2; row_move <= 2; row_move++)
+        if ((row_move == 2 || row_move == -2) &&
+            target_row >= 0 && target_row <= NUM_ROW - 1)
         {
-            if ((row_move == 2 || row_move == -2) &&
-                target_row >= 0 && target_row <= 7)
-            {
-                if ((target_col == current_col + 1 ||
-                     target_col == current_col - 1) &&
-                    target_col >= a && target_col <= h)
-                    return true;
-            }
-            if (row_move == 1 || row_move == -1)
-            {
-                if ((target_col == current_col + 2 ||
-                     target_col == current_col - 2) &&
-                    target_col >= a && target_col <= h)
-                    return true;
-            }
+            if ((target_col == current_col + 1 ||
+                 target_col == current_col - 1) &&
+                target_col >= a && target_col <= NUM_COL - 1)
+                return true;
+        }
+        if (row_move == 1 || row_move == -1)
+        {
+            if ((target_col == current_col + 2 ||
+                 target_col == current_col - 2) &&
+                target_col >= a && target_col <= NUM_COL - 1)
+                return true;
         }
     }
     printf("\nInvalid Knight move");
     return false;
 }
 
+/*
+    Checks how the Rook moves and to where.
+    Determines if the move is legal or not
+    Returns : True if the Rook is allowed to move to its destination
+*/
 bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
 {
     int rook_id = (int)list_id[PIECE_ID];
@@ -492,7 +570,7 @@ bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
     }
     if (!is_row_blocked(board, list_id, current_player))
     {
-        if (target_col != current_col && target_row == current_row)
+        if (target_row == current_row && target_col != current_col)
         {
             if (!is_cell_occupied_by_ally(board, list_id, current_player) &&
                 !is_cell_occupied_by_enemy(board, list_id, current_player))
@@ -504,6 +582,11 @@ bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
     return false;
 }
 
+/*
+    Checks how the Pawn moves and to where.
+    Determines if the move is legal or not
+    Returns : True if the Pawn is allowed to move to its destination
+*/
 bool is_pawn_move_legal(board_s *board, char *list_id, int current_player)
 {
     int pawn_id = (int)list_id[PIECE_ID];
@@ -515,7 +598,7 @@ bool is_pawn_move_legal(board_s *board, char *list_id, int current_player)
 
     // dinner time!
     if ((target_col == current_col - 1 && target_col >= a && target_row == current_row + direction) ||
-        (target_col == current_col + 1 && target_col <= h && target_row == current_row + direction))
+        (target_col == current_col + 1 && target_col <= NUM_COL - 1 && target_row == current_row + direction))
         if (!is_cell_occupied_by_ally(board, list_id, current_player))
             return true;
     if (target_col != current_col)
@@ -526,20 +609,21 @@ bool is_pawn_move_legal(board_s *board, char *list_id, int current_player)
 
     // Check if it's the pawn's first move
     bool is_first_move = (current_player == WHITE && current_row == 1) ||
-                         (current_player == BLACK && current_row == 6);
+                         (current_player == BLACK && current_row == NUM_ROW - 2);
 
     // Check for two square move (only on first move)
     if (is_first_move && target_row == current_row + (2 * direction))
     {
         if (!is_cell_occupied_by_ally(board, list_id, current_player) &&
-            !is_cell_occupied_by_ally(board, list_id, current_player))
+            !is_cell_occupied_by_enemy(board, list_id, current_player))
             return true;
     }
 
     // Check for one square move
     if (target_row == current_row + direction)
     {
-        if (!is_cell_occupied_by_ally(board, list_id, current_player))
+        if (!is_cell_occupied_by_ally(board, list_id, current_player) &&
+            !is_cell_occupied_by_enemy(board, list_id, current_player))
             return true;
     }
 
