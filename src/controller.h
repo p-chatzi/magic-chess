@@ -29,5 +29,6 @@ bool is_rook_move_legal(board_s *board, char *list_id, int current_player);
 // bool is_king_move_legal(board_s *board, char *list_id, int current_player);
 bool is_row_blocked(board_s *board, char *list_id, int current_player);
 bool is_col_blocked(board_s *board, char *list_id, int current_player);
+bool is_cell_occupied_by_enemy(board_s *board, char *list_id, int current_player);
 
 #endif

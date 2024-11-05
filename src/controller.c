@@ -129,8 +129,37 @@ bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
         if (board->player[current_player][pid].pos.x == list_id[ROW_ID] &&
             board->player[current_player][pid].pos.y == list_id[COL_ID])
         {
-            if ((int)list_id[0] != pid)
+            if ((int)list_id[PIECE_ID] != pid)
                 return true;
+        }
+    }
+    return false;
+}
+
+bool is_cell_occupied_by_enemy(board_s *board, char *list_id, int current_player)
+{
+    if (current_player == BLACK)
+    {
+        for (int pid = PAWN0; pid < NUM_PIECES; pid++)
+        {
+            if (board->player[WHITE][pid].pos.x == list_id[ROW_ID] &&
+                board->player[WHITE][pid].pos.y == list_id[COL_ID])
+            {
+                if ((int)list_id[PIECE_ID] != pid)
+                    return true;
+            }
+        }
+    }
+    if (current_player == WHITE)
+    {
+        for (int pid = PAWN0; pid < NUM_PIECES; pid++)
+        {
+            if (board->player[BLACK][pid].pos.x == list_id[ROW_ID] &&
+                board->player[BLACK][pid].pos.y == list_id[COL_ID])
+            {
+                if ((int)list_id[PIECE_ID] != pid)
+                    return true;
+            }
         }
     }
     return false;
@@ -424,7 +453,8 @@ bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
     {
         if (target_col == current_col && target_row != current_row)
         {
-            if (!is_cell_occupied_by_ally(board, list_id, current_player))
+            if (!is_cell_occupied_by_ally(board, list_id, current_player) &&
+                !is_cell_occupied_by_enemy(board, list_id, current_player))
                 return true;
         }
     }
@@ -432,7 +462,8 @@ bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
     {
         if (target_col != current_col && target_row == current_row)
         {
-            if (!is_cell_occupied_by_ally(board, list_id, current_player))
+            if (!is_cell_occupied_by_ally(board, list_id, current_player) &&
+                !is_cell_occupied_by_enemy(board, list_id, current_player))
                 return true;
         }
     }
