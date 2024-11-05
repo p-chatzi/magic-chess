@@ -371,8 +371,8 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
     }
     if (list_id[PIECE_ID] == ROOK8 || list_id[0] == ROOK9)
         return is_rook_move_legal(board, list_id, current_player);
-    // if (list_id[0] == KNIGHT10 || list_id[0] == KNIGHT11)
-    // return is_knight_move_legal(board, list_id, current_player);
+    if (list_id[0] == KNIGHT10 || list_id[0] == KNIGHT11)
+        return is_knight_move_legal(board, list_id, current_player);
     // if (list_id[0] == BISHOP12 || list_id[0] == BISHOP13)
     // return is_bishop_move_legal(board, list_id, current_player);
     // if (list_id[0] == QUEEN)
@@ -437,6 +437,38 @@ bool is_col_blocked(board_s *board, char *list_id, int current_player)
             }
         }
     }
+    return false;
+}
+
+bool is_knight_move_legal(board_s *board, char *list_id, int current_player)
+{
+    int knight_id = (int)list_id[PIECE_ID];
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_col = board->player[current_player][knight_id].pos.y;
+
+    if (!is_cell_occupied_by_ally(board, list_id, current_player))
+    {
+        for (int row_move = -2; row_move <= 2; row_move++)
+        {
+            if ((row_move == 2 || row_move == -2) &&
+                target_row >= 0 && target_row <= 7)
+            {
+                if ((target_col == current_col + 1 ||
+                     target_col == current_col - 1) &&
+                    target_col >= a && target_col <= h)
+                    return true;
+            }
+            if (row_move == 1 || row_move == -1)
+            {
+                if ((target_col == current_col + 2 ||
+                     target_col == current_col - 2) &&
+                    target_col >= a && target_col <= h)
+                    return true;
+            }
+        }
+    }
+    printf("\nInvalid Knight move");
     return false;
 }
 

@@ -23,7 +23,7 @@ void set_board_from_save(board_s *board, char *buffer, int *current_player);
 bool piece_movement_validity(board_s *board, char *list_id, int current_player);
 bool is_pawn_move_legal(board_s *board, char *list_id, int current_player);
 bool is_rook_move_legal(board_s *board, char *list_id, int current_player);
-// bool is_knight_move_legal(board_s *board, char *list_id, int current_player);
+bool is_knight_move_legal(board_s *board, char *list_id, int current_player);
 // bool is_bishop_move_legal(board_s *board, char *list_id, int current_player);
 // bool is_queen_move_legal(board_s *board, char *list_id, int current_player);
 // bool is_king_move_legal(board_s *board, char *list_id, int current_player);

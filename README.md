@@ -21,7 +21,6 @@ What I want:
  
 ## Input
 - [x] Main menu
-- [ ] Choose color
 - [x] Move pieces
 - [ ] Pawn upgrade
 - [ ] Tie offer
@@ -32,11 +31,13 @@ What I want:
 - [x] Save and load a game
 - [ ] Check pawn tranform possibility
 - [ ] Check check
+    - [ ] Is moving prohibited due to check
+    - [ ] Does this cause a check
 - [ ] Check checkmate
 - [ ] Pieces movement patterns
     - [x] Pawn
-    - [-] Rook
-    - [ ] Knight
+    - [x] Rook
+    - [x] Knight
     - [ ] Bishop
     - [ ] Queen
     - [ ] King
@@ -47,7 +48,7 @@ To go further :D
 ## Play vs computer
 - [ ] Check possible moves
 - [ ] Random choice
-- [ ] AI model from scratch... not so fast, not yet
+- [ ] Trained model
 
 ## Invent pieces!
 - [ ] Input piece name
@@ -56,7 +57,8 @@ To go further :D
 Check online, plenty of fun pieces ideas
 
 ## Play online
-- [ ] not so fast, not yet
+- [ ] Choose color
+- [ ] Messages
 
 ## 2D engine
 *Without it, only ascii art no sprite and other 2D possibilites
