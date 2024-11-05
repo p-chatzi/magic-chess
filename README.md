@@ -38,7 +38,7 @@ What I want:
     - [x] Pawn
     - [x] Rook
     - [x] Knight
-    - [ ] Bishop
+    - [x] Bishop
     - [ ] Queen
     - [ ] King
 <br> </br>

@@ -369,13 +369,13 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
     }
     if (list_id[PIECE_ID] == ROOK8 || list_id[PIECE_ID] == ROOK9)
         return is_rook_move_legal(board, list_id, current_player);
-    if (list_id[0] == KNIGHT10 || list_id[PIECE_ID] == KNIGHT11)
+    if (list_id[PIECE_ID] == KNIGHT10 || list_id[PIECE_ID] == KNIGHT11)
         return is_knight_move_legal(board, list_id, current_player);
-    if (list_id[0] == BISHOP12 || list_id[PIECE_ID] == BISHOP13)
+    if (list_id[PIECE_ID] == BISHOP12 || list_id[PIECE_ID] == BISHOP13)
         return is_bishop_move_legal(board, list_id, current_player);
-    // if (list_id[0] == QUEEN)
+    // if (list_id[PIECE_ID] == QUEEN)
     // return is_queen_move_legal(board, list_id, current_player);
-    // if (list_id[0] == KING)
+    // if (list_id[PIECE_ID] == KING)
     // return is_king_move_legal(board, list_id, current_player);
 
     printf("\nValidity could not be verified");
@@ -429,15 +429,15 @@ bool is_col_blocked(board_s *board, char *list_id, int current_player)
     for (int i = PAWN0; i < NUM_PIECES; i++)
     {
         int direction = (target_col > current_col) ? 1 : -1;
-        for (int col_i = 1; col_i < (direction * target_col) - (direction * current_col); col_i++)
+        for (int col_move = 1; col_move < (direction * target_col) - (direction * current_col); col_move++)
         {
-            if (board->player[WHITE][i].pos.x == current_col + (direction * col_i) &&
+            if (board->player[WHITE][i].pos.x == current_col + (direction * col_move) &&
                 target_row == board->player[WHITE][(int)list_id[PIECE_ID]].pos.y)
             {
                 printf("\nCol blocked by white");
                 return true;
             }
-            if (board->player[BLACK][i].pos.x == current_col + (direction * col_i) &&
+            if (board->player[BLACK][i].pos.x == current_col + (direction * col_move) &&
                 target_row == board->player[BLACK][(int)list_id[PIECE_ID]].pos.y)
             {
                 printf("\nCol blocked by black");
@@ -458,19 +458,26 @@ bool is_diagonal_blocked(board_s *board, char *list_id, int current_player)
     int target_row = list_id[ROW_ID];
     int target_col = list_id[COL_ID];
     int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
-    int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
-    for (int i = PAWN0; i < NUM_PIECES; i++)
+    for (int piece = PAWN0; piece < NUM_PIECES; piece++)
     {
-        int col_direction = (target_col > current_col) ? 1 : -1;
-        int row_direction = (target_row > current_row) ? 1 : -1;
-
-        for (int row_move = -NUM_ROW; row_move < NUM_ROW; row_move) // - 7 to 7
+        for (int cells_to_check = 1; cells_to_check < abs(target_col - target_row); cells_to_check++)
         {
-            return true;
+            if (abs(target_col) == abs(target_row))
+            {
+                if (board->player[WHITE][piece].pos.x == current_row + cells_to_check)
+                {
+                    printf("\nDiagonal blocked by white");
+                    return true;
+                }
+                if (board->player[BLACK][piece].pos.x == current_row + cells_to_check)
+                {
+                    printf("\nDiagonal blocked by black");
+                    return true;
+                }
+            }
         }
     }
-
     return false;
 }
 
@@ -481,30 +488,24 @@ bool is_diagonal_blocked(board_s *board, char *list_id, int current_player)
 */
 bool is_bishop_move_legal(board_s *board, char *list_id, int current_player)
 {
-    int bishop_id = (int)list_id[PIECE_ID];
     int target_row = list_id[ROW_ID];
     int target_col = list_id[COL_ID];
-    int current_row = board->player[current_player][bishop_id].pos.x;
-    int current_col = board->player[current_player][bishop_id].pos.y;
+    int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
+    int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
-    for (int i = PAWN0; i < NUM_PIECES; i++)
+    for (int piece = PAWN0; piece < NUM_PIECES; piece++)
     {
+        int cells_moved = abs(target_col - current_col);
         int col_direction = (target_col > current_col) ? 1 : -1;
         int row_direction = (target_row > current_row) ? 1 : -1;
 
-        if (target_col == target_row * row_direction &&
-            target_col >= a && target_col <= NUM_COL - 1 &&
-            target_row >= 0 && target_row <= NUM_ROW - 1)
-        {
+        if (target_col == current_col + col_direction * cells_moved &&
+            target_row == current_row + row_direction * cells_moved &&
+            target_col >= a &&
+            target_col <= NUM_COL - 1 &&
+            target_row >= 0 && target_row <= NUM_ROW - 1 &&
+            !is_diagonal_blocked(board, list_id, current_player))
             return true;
-        }
-
-        if (target_row == target_col * col_direction &&
-            target_col >= a && target_col <= NUM_COL - 1 &&
-            target_row >= 0 && target_row <= NUM_ROW - 1)
-        {
-            return true;
-        }
     }
 
     printf("\nInvalid bishop move");
@@ -525,7 +526,7 @@ bool is_knight_move_legal(board_s *board, char *list_id, int current_player)
 
     for (int row_move = -2; row_move <= 2; row_move++)
     {
-        if ((row_move == 2 || row_move == -2) &&
+        if (abs(row_move) == 2 &&
             target_row >= 0 && target_row <= NUM_ROW - 1)
         {
             if ((target_col == current_col + 1 ||
@@ -533,7 +534,8 @@ bool is_knight_move_legal(board_s *board, char *list_id, int current_player)
                 target_col >= a && target_col <= NUM_COL - 1)
                 return true;
         }
-        if (row_move == 1 || row_move == -1)
+        if (abs(row_move) == 1 &&
+            target_row >= 0 && target_row <= NUM_ROW - 1)
         {
             if ((target_col == current_col + 2 ||
                  target_col == current_col - 2) &&
@@ -549,6 +551,7 @@ bool is_knight_move_legal(board_s *board, char *list_id, int current_player)
     Checks how the Rook moves and to where.
     Determines if the move is legal or not
     Returns : True if the Rook is allowed to move to its destination
+    Note : TEST THE HECK OF OUT THIS - NOT SURE IT'S GOING TO WORK AS INTENDED
 */
 bool is_rook_move_legal(board_s *board, char *list_id, int current_player)
 {
