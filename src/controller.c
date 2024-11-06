@@ -373,8 +373,8 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
         return is_knight_move_legal(board, list_id, current_player);
     if (list_id[PIECE_ID] == BISHOP12 || list_id[PIECE_ID] == BISHOP13)
         return is_bishop_move_legal(board, list_id, current_player);
-    // if (list_id[PIECE_ID] == QUEEN)
-    // return is_queen_move_legal(board, list_id, current_player);
+    if (list_id[PIECE_ID] == QUEEN)
+        return is_queen_move_legal(board, list_id, current_player);
     // if (list_id[PIECE_ID] == KING)
     // return is_king_move_legal(board, list_id, current_player);
 
@@ -478,6 +478,30 @@ bool is_diagonal_blocked(board_s *board, char *list_id, int current_player)
             }
         }
     }
+    return false;
+}
+
+/*
+    Checks how the queen moves and to where.
+    Determines if the move is legal or not
+    Returns : True if the queen is allowed to move to its destination
+*/
+bool is_queen_move_legal(board_s *board, char *list_id, int current_player)
+{
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_row = board->player[current_player][(int)list_id[0]].pos.x;
+    int current_col = board->player[current_player][(int)list_id[0]].pos.y;
+
+    if (is_rook_move_legal(board, list_id, current_player) &&
+        ((target_row == current_row && !is_row_blocked(board, list_id, current_player)) ||
+         (target_col == current_col && !is_col_blocked(board, list_id, current_player))))
+        return true;
+
+    if (is_bishop_move_legal(board, list_id, current_player) &&
+        !is_diagonal_blocked(board, list_id, current_player))
+        return true;
+
     return false;
 }
 
