@@ -23,7 +23,7 @@ What I want:
 - [x] Main menu
 - [x] Move pieces
 - [ ] Pawn upgrade
-- [ ] Tie offer
+- [x] Tie offer
 
 ## Game engine / logic
 - [x] Cell availability
@@ -34,13 +34,15 @@ What I want:
     - [ ] Is moving prohibited due to check
     - [ ] Does this cause a check
 - [ ] Check checkmate
-- [ ] Pieces movement patterns
+- [-] Pieces movement patterns
     - [x] Pawn
     - [x] Rook
     - [x] Knight
     - [x] Bishop
-    - [ ] Queen
-    - [ ] King
+    - [x] Queen
+    - [x] King
+    - [ ] Castling king and queen side
+    - [ ] En passant pawn
 <br> </br>
 
 # Take me to the moon 🎵🎵

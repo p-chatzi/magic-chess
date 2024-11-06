@@ -59,13 +59,24 @@ void start_game(board_s *board, FILE *file, int current_player)
 {
     print_board(board);
     int player_choice = START;
+    bool tie_offer = false;
+    const char *player[] = {"White", "Black"};
     while (1)
     {
         char player_move[20], list_id[NB_INPUTS];
         get_player_choice(player_move);
         player_choice = tokenise_player_choice(player_move, list_id);
-        if (player_choice == EXIT)
-            break;
+        if (player_choice == TIE)
+        {
+            if (tie_offer == true)
+            {
+                printf("\nThe game ended in a tie");
+                break;
+            }
+            printf("\n%s offers to tie, to end the game in a tie, enter tie", player[current_player]);
+            tie_offer = true;
+            continue;
+        }
         if (player_choice == SAVE)
         {
             save_game(board, file, current_player);
@@ -168,19 +179,19 @@ int tokenise_player_choice(char *player_move, char *list_id)
     char *selected_piece, *row, *col;
 
     selected_piece = strtok(player_move, "-");
-    if (strcmp(selected_piece, "exit") == 0)
-        return EXIT;
+    if (strcmp(selected_piece, "tie") == 0)
+        return TIE;
     if (strcmp(selected_piece, "save") == 0)
         return SAVE;
     col = strtok(NULL, "-");
     row = strtok(NULL, "-");
 
-    list_id[0] = get_piece_id(selected_piece);
-    list_id[1] = atoi(row) - 1;
-    list_id[2] = get_col_id(col);
+    list_id[PIECE_ID] = get_piece_id(selected_piece);
+    list_id[ROW_ID] = atoi(row) - 1;
+    list_id[COL_ID] = get_col_id(col);
 
     printf("\nPiece: %s, id: %d \nRow: %s w/ id: %d \nCol: %s w/ id: %d\n", selected_piece, list_id[0], row, list_id[1], col, list_id[2]);
-    return 1;
+    return START;
 }
 
 void update_piece(board_s *board, int current_player, char *list_id)
@@ -360,6 +371,12 @@ void set_board_from_save(board_s *board, char *buffer, int *current_player)
     }
 }
 
+/*
+    Determines which piece is selected
+    Calls the fonctions checking the validity of said piece
+    Returns : The return of the validity fonctions
+    Retruns : True if the move of said piece is legal, else false
+*/
 bool piece_movement_validity(board_s *board, char *list_id, int current_player)
 {
     for (int pid = PAWN0; pid < ROOK8; pid++)
@@ -386,6 +403,7 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
     Determines if a piece exists along the row path;
     between the destination and current position
     Returns : True if there is a piece blocking the path
+    Returns : False if nothing blocks the path
 */
 bool is_row_blocked(board_s *board, char *list_id, int current_player)
 {
@@ -419,6 +437,7 @@ bool is_row_blocked(board_s *board, char *list_id, int current_player)
     Determines if a piece exists along the column path;
     between the destination and current position
     Returns : True if there is a piece blocking the path
+    Returns : False if nothing blocks the path
 */
 bool is_col_blocked(board_s *board, char *list_id, int current_player)
 {

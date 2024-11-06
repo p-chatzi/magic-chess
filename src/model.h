@@ -21,7 +21,8 @@ typedef enum menu
     INVENT,
     RULES,
     SETTINGS,
-    SAVE
+    SAVE,
+    TIE
 } menu_options_e;
 
 typedef enum piece_type

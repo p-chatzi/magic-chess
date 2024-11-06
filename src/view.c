@@ -64,7 +64,7 @@ void print_test_pieces(pieces_s *pieces, player_e player)
 
 void get_player_choice(char *player_move)
 {
-    printf("\n\nEnter your move (Choose : exit, save or piece#-col-row) : ");
+    printf("\n\nEnter your move (Choose : exit, save, tie or piece#-col-row) : ");
     scanf("%19s", player_move);
 }
 
