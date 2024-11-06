@@ -34,19 +34,19 @@ What I want:
 - [x] Capture enemy pieces
 - [x] Save and load a game
 - [ ] Check pawn tranform possibility
-- [-] Check check
+- [~] Check check
     - [ ] Is moving prohibited due to check
     - [x] From pawn
     - [x] From rook
-    - [-] From knight
-    - [-] From bishop
-    - [-] From queen 
+    - [~] From knight
+    - [~] From bishop
+    - [~] From queen 
 - [ ] Check checkmate
     - [ ] Can king safely move
     - [ ] Can a piece block the row/col/diagonal
     - [ ] Can the piece attackin be captured
     - [ ] Make sure to test double checks
-- [-] Pieces movement patterns
+- [~] Pieces movement patterns
     - [x] Pawn
     - [x] Rook
     - [x] Knight
