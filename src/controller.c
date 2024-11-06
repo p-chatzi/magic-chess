@@ -375,8 +375,8 @@ bool piece_movement_validity(board_s *board, char *list_id, int current_player)
         return is_bishop_move_legal(board, list_id, current_player);
     if (list_id[PIECE_ID] == QUEEN)
         return is_queen_move_legal(board, list_id, current_player);
-    // if (list_id[PIECE_ID] == KING)
-    // return is_king_move_legal(board, list_id, current_player);
+    if (list_id[PIECE_ID] == KING)
+        return is_king_move_legal(board, list_id, current_player);
 
     printf("\nValidity could not be verified");
     return false;
@@ -478,6 +478,26 @@ bool is_diagonal_blocked(board_s *board, char *list_id, int current_player)
             }
         }
     }
+    return false;
+}
+
+/*
+    Checks how the king moves and to where.
+    Determines if the move is legal or not
+    Returns : True if the king is allowed to move to its destination
+*/
+bool is_king_move_legal(board_s *board, char *list_id, int current_player)
+{
+    int target_row = list_id[ROW_ID];
+    int target_col = list_id[COL_ID];
+    int current_row = board->player[current_player][(int)list_id[0]].pos.x;
+    int current_col = board->player[current_player][(int)list_id[0]].pos.y;
+
+    if ((abs(target_col - current_col) == 1 || target_col - current_col == 0) &&
+        (abs(target_row - current_row) == 1 || target_row - current_row == 0))
+        return true;
+
+    printf("\nInvalid King move");
     return false;
 }
 
