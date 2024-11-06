@@ -23,17 +23,29 @@ What I want:
 - [x] Main menu
 - [x] Move pieces
 - [ ] Pawn upgrade
+    - Pawn transform with current IDs is an issue
+    - Refacto ids, pieces should be determine by pos only
+    - Goes with change into gui instead of terminal
 - [x] Tie offer
+- [ ] Forfeit
 
 ## Game engine / logic
 - [x] Cell availability
 - [x] Capture enemy pieces
 - [x] Save and load a game
 - [ ] Check pawn tranform possibility
-- [ ] Check check
+- [-] Check check
     - [ ] Is moving prohibited due to check
-    - [ ] Does this cause a check
+    - [x] From pawn
+    - [x] From rook
+    - [-] From knight
+    - [-] From bishop
+    - [-] From queen 
 - [ ] Check checkmate
+    - [ ] Can king safely move
+    - [ ] Can a piece block the row/col/diagonal
+    - [ ] Can the piece attackin be captured
+    - [ ] Make sure to test double checks
 - [-] Pieces movement patterns
     - [x] Pawn
     - [x] Rook
@@ -48,7 +60,6 @@ What I want:
 # Take me to the moon 🎵🎵
 To go further :D
 ## Play vs computer
-- [ ] Check possible moves
 - [ ] Random choice
 - [ ] Trained model
 
@@ -56,6 +67,7 @@ To go further :D
 - [ ] Input piece name
 - [ ] Input piece sprite*
 - [ ] Input piece rules
+- [ ] Input spawn location
 Check online, plenty of fun pieces ideas
 
 ## Play online
@@ -69,7 +81,7 @@ Dont waste too much time on ascii since 2D engine will be better lol
 ## Game modes
 - [ ] Bullet
 - [ ] Blitz
-- [ ] ???
+- [ ] Custom clock timers
 
 ## Custom
 - [ ] Modifiable board size

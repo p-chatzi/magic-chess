@@ -25,8 +25,7 @@ typedef enum menu
     TIE
 } menu_options_e;
 
-typedef enum piece_type
-{
+typedef enum piece_type{
     PAWN0,
     PAWN1,
     PAWN2,

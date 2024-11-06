@@ -7,6 +7,11 @@
 #include "view.h"
 #include "model.h"
 
+/*
+    Called at start
+    Redirects to fonctions needed based on user's choice
+    No return
+*/
 void boot_magic_chess()
 {
     board_s board;
@@ -55,6 +60,10 @@ void boot_magic_chess()
     }
 }
 
+/*
+    The game loop, calls everything needed to make chess work
+    No return
+*/
 void start_game(board_s *board, FILE *file, int current_player)
 {
     print_board(board);
@@ -63,6 +72,7 @@ void start_game(board_s *board, FILE *file, int current_player)
     const char *player[] = {"White", "Black"};
     while (1)
     {
+        // What does the player want to do
         char player_move[20], list_id[NB_INPUTS];
         get_player_choice(player_move);
         player_choice = tokenise_player_choice(player_move, list_id);
@@ -71,7 +81,7 @@ void start_game(board_s *board, FILE *file, int current_player)
             if (tie_offer == true)
             {
                 printf("\nThe game ended in a tie");
-                break;
+                return;
             }
             printf("\n%s offers to tie, to end the game in a tie, enter tie", player[current_player]);
             tie_offer = true;
@@ -83,21 +93,34 @@ void start_game(board_s *board, FILE *file, int current_player)
             continue;
         }
 
+        // You are not allowed to move at your current position (no skipping turns!)
+        if (is_destination_current_position(board, list_id, current_player))
+            continue;
+
+        // These pieces don't exist anymore, let them rest in peace
         if (!is_piece_selected_alive(board, list_id, current_player))
         {
             printf("\nThis piece has been captured, choose that is still alive");
             continue;
         }
+
+        // Don't eat your allies!
         if (is_cell_occupied_by_ally(board, list_id, current_player))
         {
             printf("\nCannot move on top of your own piece");
             continue;
         }
 
+        // King in danger!
+        if (is_king_checked(board, list_id, current_player))
+            printf("ok");
+
+        // Is the player's choice even a legal move?
         if (!piece_movement_validity(board, list_id, current_player))
             continue;
-        capture_enemy_piece(board, list_id, current_player);
 
+        // Everything validated!
+        capture_enemy_piece(board, list_id, current_player);
         update_piece(board, current_player, list_id);
         print_board(board);
         if (current_player == WHITE)
@@ -107,11 +130,20 @@ void start_game(board_s *board, FILE *file, int current_player)
     }
 }
 
+/*
+    Checks if the piece selected is alive or not
+    Since you cannot play a piece that's been captured ;)
+    Returns : True if the piece is alive
+*/
 bool is_piece_selected_alive(board_s *board, char *list_id, int current_player)
 {
     return board->player[current_player][(int)list_id[PIECE_ID]].is_alive;
 }
 
+/*
+    Deletes a piece when an oponnent places one of their piece on top
+    No return.
+*/
 void capture_enemy_piece(board_s *board, char *list_id, int current_player)
 {
     for (int pid = PAWN0; pid < NUM_PIECES; pid++)
@@ -130,6 +162,11 @@ void capture_enemy_piece(board_s *board, char *list_id, int current_player)
     }
 }
 
+/*
+    Checks if a cell is occupied by ally
+    Since you cannot move ontop of ally
+    Return : True if cell is occupied, false if not
+*/
 bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
 {
 
@@ -145,6 +182,11 @@ bool is_cell_occupied_by_ally(board_s *board, char *list_id, int current_player)
     return false;
 }
 
+/*
+    Checks if a cell is occupied by an enemy
+    Useful to check if path is occupied for example
+    Return : True if cell is occupied, false if not
+*/
 bool is_cell_occupied_by_enemy(board_s *board, char *list_id, int current_player)
 {
     if (current_player == BLACK)
@@ -174,6 +216,11 @@ bool is_cell_occupied_by_enemy(board_s *board, char *list_id, int current_player
     return false;
 }
 
+/*
+    Parses the player's input
+    Prints the parsed info (for testing sake)
+    Return : TIE / SAVE or START based on users first input
+*/
 int tokenise_player_choice(char *player_move, char *list_id)
 {
     char *selected_piece, *row, *col;
@@ -194,12 +241,20 @@ int tokenise_player_choice(char *player_move, char *list_id)
     return START;
 }
 
+/*
+    Updates the piece with the player's input
+    No return.
+*/
 void update_piece(board_s *board, int current_player, char *list_id)
 {
     board->player[current_player][(int)list_id[PIECE_ID]].pos.x = list_id[ROW_ID];
     board->player[current_player][(int)list_id[PIECE_ID]].pos.y = list_id[COL_ID];
 }
 
+/*
+    Compares the name of the piece with the name given
+    Return : ID of the piece
+*/
 int get_piece_id(const char *name)
 {
     for (int i = PAWN0; i < NUM_PIECES; i++)
@@ -212,6 +267,10 @@ int get_piece_id(const char *name)
     return -1;
 }
 
+/*
+    Compares the name of the column with the name given
+    Return : ID of the column
+*/
 int get_col_id(const char *name)
 {
     for (int i = 0; i < NUM_ROW; i++)
@@ -224,6 +283,10 @@ int get_col_id(const char *name)
     return -1;
 }
 
+/*
+    Sets all the pieces to their starting position and alive
+    No return
+*/
 void reset_board(board_s *board)
 {
     for (int i = PAWN0; i < ROOK8; i++)
@@ -302,6 +365,10 @@ void reset_board(board_s *board)
     }
 }
 
+/*
+    Stores information of every piece in a txt file (opens/creates the file)
+    No return
+*/
 void save_game(board_s *board, FILE *file, int current_player)
 {
     file = fopen("saved_game", "w");
@@ -331,6 +398,11 @@ void save_game(board_s *board, FILE *file, int current_player)
     fclose(file);
 }
 
+/*
+    Retrieves the the txt save file (closes the file afterwards)
+    Stores the string of information into a buffer
+    Return : (by*)Buffer
+*/
 void load_game(board_s *board, FILE *file, int current_player)
 {
     file = fopen("saved_game", "r");
@@ -352,6 +424,11 @@ void load_game(board_s *board, FILE *file, int current_player)
     fclose(file);
 }
 
+/*
+    Parses the given buffer
+    Sets board's pieces based on the parsed information
+    No return
+*/
 void set_board_from_save(board_s *board, char *buffer, int *current_player)
 {
     char *player_turn = strtok(buffer, "-");
@@ -369,6 +446,107 @@ void set_board_from_save(board_s *board, char *buffer, int *current_player)
         board->player[BLACK][piece].pos.y = atoi(strtok(NULL, "-"));
         board->player[BLACK][piece].is_alive = atoi(strtok(NULL, "-"));
     }
+}
+
+/*
+    Checks if the destination is the same as current position
+    That would result in skipping a turn, illegal move!
+    Return : True if it is the same position, false if not
+*/
+bool is_destination_current_position(board_s *board, char *list_id, int current_player)
+{
+    for (int piece = PAWN0; piece < NUM_PIECES; piece++)
+    {
+        if (list_id[ROW_ID] == board->player[current_player][piece].pos.x &&
+            list_id[COL_ID] == board->player[current_player][piece].pos.y)
+        {
+            printf("\nYour destination has to be different from your current position");
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
+    Checks if the king is checked by any opponent piece
+    Kings are not allowed to check each other
+    (this fonction does not check if king is checking opponnent)
+    Return : true if king in check, false if not
+*/
+bool is_king_checked(board_s *board, char *list_id, int current_player)
+{
+    int white_kx = board->player[WHITE][KING].pos.x;
+    int white_ky = board->player[WHITE][KING].pos.y;
+    int black_kx = board->player[BLACK][KING].pos.x;
+    int black_ky = board->player[BLACK][KING].pos.y;
+
+    // Checks if checked by pawn
+    for (int pawn = PAWN0; pawn < ROOK8; pawn++)
+    {
+        if (board->player[BLACK][pawn].pos.x == white_kx + 1 &&
+            abs(white_ky - board->player[BLACK][pawn].pos.y) == 1)
+        {
+            printf("\nKing checked by black pawn");
+            return true;
+        }
+        if (board->player[WHITE][pawn].pos.x == black_kx - 1 &&
+            abs(white_ky - board->player[BLACK][pawn].pos.y) == 1)
+        {
+            printf("\nKing checked by white pawn");
+            return true;
+        }
+    }
+
+    // Checks if checked by rook or by queen (row and col)
+    for (int piece = ROOK8; piece < KING; piece++)
+    {
+        char black_rooks[3] = {piece, white_kx, white_ky};
+        char white_rooks[3] = {piece, black_kx, black_ky};
+
+        if (piece > ROOK9)
+        {
+            piece = QUEEN - 1;
+            continue;
+        }
+        if (board->player[BLACK][piece].pos.x == white_kx &&
+            !is_row_blocked(board, black_rooks, BLACK))
+        {
+            printf("\nKing checked by black %s (row)", piece_map[piece].name);
+            return true;
+        }
+        if (board->player[BLACK][piece].pos.y == white_ky &&
+            !is_col_blocked(board, black_rooks, BLACK))
+        {
+            printf("\nKing checked by black %s (col)", piece_map[piece].name);
+            return true;
+        }
+        if (board->player[WHITE][piece].pos.x == black_kx &&
+            !is_row_blocked(board, white_rooks, BLACK))
+        {
+            printf("\nKing checked by white %s (row)", piece_map[piece].name);
+            return true;
+        }
+        if (board->player[WHITE][piece].pos.y == black_ky &&
+            !is_col_blocked(board, white_rooks, WHITE))
+        {
+            printf("\nKing checked by white %s (col)", piece_map[piece].name);
+            return true;
+        }
+    }
+
+    // Checks if checked by bishop or queen (diagonals)
+    // for (int piece = BISHOP12; piece < KING; piece++)
+    // {
+    // }
+
+    // Checks if checked by knight
+    // for (int knight = KNIGHT10; knight < BISHOP12; knight++)
+    // {
+    // int black_knights[3] = {knight, white_kx, white_ky};
+    // int white_knights[3] = {knight, black_kx, black_ky};
+    // }
+
+    return false;
 }
 
 /*
@@ -562,8 +740,8 @@ bool is_bishop_move_legal(board_s *board, char *list_id, int current_player)
         int col_direction = (target_col > current_col) ? 1 : -1;
         int row_direction = (target_row > current_row) ? 1 : -1;
 
-        if (target_col == current_col + col_direction * cells_moved &&
-            target_row == current_row + row_direction * cells_moved &&
+        if (target_col == current_col + cells_moved * col_direction &&
+            target_row == current_row + cells_moved * row_direction &&
             target_col >= a &&
             target_col <= NUM_COL - 1 &&
             target_row >= 0 && target_row <= NUM_ROW - 1 &&

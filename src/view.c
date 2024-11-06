@@ -51,6 +51,10 @@ void print_board(board_s *board)
     }
 }
 
+/*
+    Used for debugging
+    Prints information on every piece of a given player
+*/
 void print_test_pieces(pieces_s *pieces, player_e player)
 {
     for (int i = 0; i < NUM_PIECES; i++)
@@ -62,9 +66,13 @@ void print_test_pieces(pieces_s *pieces, player_e player)
     }
 }
 
+/*
+    Asks player for input
+    Returns : (by*) the player's input
+*/
 void get_player_choice(char *player_move)
 {
-    printf("\n\nEnter your move (Choose : exit, save, tie or piece#-col-row) : ");
+    printf("\n\nEnter your move (Choose : save, tie or piece#-col-row) : ");
     scanf("%19s", player_move);
 }
 
