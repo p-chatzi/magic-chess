@@ -66,6 +66,7 @@ void boot_magic_chess()
 */
 void start_game(board_s *board, FILE *file, int current_player)
 {
+    clear_terminal();
     print_board(board);
     int player_choice = START;
     bool tie_offer = false;
@@ -93,6 +94,12 @@ void start_game(board_s *board, FILE *file, int current_player)
             continue;
         }
 
+        // King in danger!
+        // if (is_my_king_checked(board, current_player))
+            // printf("\nKing in danger!");
+        if (is_king_checked(board, list_id, current_player))
+        printf("\nKing in danger!");
+
         // You are not allowed to move at your current position (no skipping turns!)
         if (is_destination_current_position(board, list_id, current_player))
             continue;
@@ -110,10 +117,6 @@ void start_game(board_s *board, FILE *file, int current_player)
             printf("\nCannot move on top of your own piece");
             continue;
         }
-
-        // King in danger!
-        if (is_king_checked(board, list_id, current_player))
-            printf("ok");
 
         // Is the player's choice even a legal move?
         if (!piece_movement_validity(board, list_id, current_player))
@@ -233,8 +236,8 @@ int tokenise_player_choice(char *player_move, char *list_id)
         return TIE;
     if (strcmp(selected_piece, "save") == 0)
         return SAVE;
-    col = strtok(NULL, "-");
     row = strtok(NULL, "-");
+    col = strtok(NULL, "-");
 
     list_id[PIECE_ID] = get_piece_id(selected_piece);
     list_id[ROW_ID] = atoi(row) - 1;
@@ -368,19 +371,40 @@ void reset_board(board_s *board)
     }
 }
 */
-
+// Original reset board above - test reset board under
 void reset_board(board_s *board)
 {
+    board->player[WHITE][PAWN0].is_alive = false;
+
+    board->player[WHITE][BISHOP12].piece_type = BISHOP12;
+    board->player[WHITE][BISHOP12].pos.x = 5;
+    board->player[WHITE][BISHOP12].pos.y = d;
+    board->player[WHITE][BISHOP12].is_alive = true;
+
+    board->player[BLACK][BISHOP12].piece_type = BISHOP12;
+    board->player[BLACK][BISHOP12].pos.x = 1;
+    board->player[BLACK][BISHOP12].pos.y = d;
+    board->player[BLACK][BISHOP12].is_alive = true;
+
     board->player[WHITE][QUEEN].piece_type = QUEEN;
-    board->player[WHITE][QUEEN].pos.x = 2;
-    board->player[WHITE][QUEEN].pos.y = f;
+    board->player[WHITE][QUEEN].pos.x = 3;
+    board->player[WHITE][QUEEN].pos.y = h;
     board->player[WHITE][QUEEN].is_alive = true;
 
     board->player[BLACK][QUEEN].piece_type = QUEEN;
-    board->player[BLACK][QUEEN].pos.x = 4;
-    board->player[BLACK][QUEEN].pos.y = d;
+    board->player[BLACK][QUEEN].pos.x = 1;
+    board->player[BLACK][QUEEN].pos.y = h;
     board->player[BLACK][QUEEN].is_alive = true;
 
+    board->player[WHITE][KING].piece_type = KING;
+    board->player[WHITE][KING].pos.x = 2;
+    board->player[WHITE][KING].pos.y = a;
+    board->player[WHITE][KING].is_alive = true;
+
+    board->player[BLACK][KING].piece_type = KING;
+    board->player[BLACK][KING].pos.x = 4;
+    board->player[BLACK][KING].pos.y = a;
+    board->player[BLACK][KING].is_alive = true;
     for (int i = 0; i < NUM_COL; i++)
     {
         col_map[i].id = i;
@@ -517,48 +541,66 @@ bool is_king_checked(board_s *board, char *list_id, int current_player)
     }
 
     // Checks if checked by rook or by queen (row and col)
-    for (int piece = ROOK8; piece < KING; piece++)
+    int pieces[] = {ROOK8, ROOK9, QUEEN};
+    for (int i = 0; i < 3; i++)
     {
-        char black_rooks[3] = {piece, white_kx, white_ky};
-        char white_rooks[3] = {piece, black_kx, black_ky};
+        char white_piece[] = {pieces[i], white_kx, white_ky};
+        char black_piece[] = {pieces[i], black_kx, black_ky};
 
-        if (piece > ROOK9)
+        if (board->player[BLACK][pieces[i]].pos.x == white_kx &&
+            !is_row_blocked(board, black_piece, BLACK))
         {
-            piece = QUEEN - 1;
-            continue;
-        }
-        if (board->player[BLACK][piece].pos.x == white_kx &&
-            !is_row_blocked(board, black_rooks, BLACK))
-        {
-            printf("\nKing checked by black %s (row)", piece_map[piece].name);
+            printf("\nKing checked by black %s (row)", piece_map[pieces[i]].name);
             return true;
         }
-        if (board->player[BLACK][piece].pos.y == white_ky &&
-            !is_col_blocked(board, black_rooks, BLACK))
+        if (board->player[BLACK][pieces[i]].pos.y == white_ky &&
+            !is_col_blocked(board, black_piece, BLACK))
         {
-            printf("\nKing checked by black %s (col)", piece_map[piece].name);
+            printf("\nKing checked by black %s (col)", piece_map[pieces[i]].name);
             return true;
         }
-        if (board->player[WHITE][piece].pos.x == black_kx &&
-            !is_row_blocked(board, white_rooks, BLACK))
+        if (board->player[WHITE][pieces[i]].pos.x == black_kx &&
+            !is_row_blocked(board, white_piece, BLACK))
         {
-            printf("\nKing checked by white %s (row)", piece_map[piece].name);
+            printf("\nKing checked by white %s (row)", piece_map[pieces[i]].name);
             return true;
         }
-        if (board->player[WHITE][piece].pos.y == black_ky &&
-            !is_col_blocked(board, white_rooks, WHITE))
+        if (board->player[WHITE][pieces[i]].pos.y == black_ky &&
+            !is_col_blocked(board, white_piece, WHITE))
         {
-            printf("\nKing checked by white %s (col)", piece_map[piece].name);
+            printf("\nKing checked by white %s (col)", piece_map[pieces[i]].name);
             return true;
         }
-
-        return false;
     }
 
-    // Checks if checked by bishop or queen (diagonals)
-    // for (int piece = BISHOP12; piece < KING; piece++)
-    // {
-    // }
+    // Checks if checked by bishop or by queen (diagonal)
+    for (int id = BISHOP12; id < KING; id++)
+    {
+        char white_piece[] = {id, white_kx, white_ky};
+        char black_piece[] = {id, black_kx, black_ky};
+
+        printf("\nBlack %s position: (%d, %d)", piece_map[id].name, board->player[BLACK][id].pos.x, board->player[BLACK][id].pos.y);
+        printf("\nWhite %s position: (%d, %d)", piece_map[id].name, board->player[WHITE][id].pos.x, board->player[WHITE][id].pos.y);
+        printf("\nBlack king position: (%d, %d)", black_kx, black_ky);
+        printf("\nWhite king position: (%d, %d)", white_kx, white_ky);
+
+        if ((abs(board->player[BLACK][id].pos.x - white_kx) ==
+             abs(board->player[BLACK][id].pos.y - white_ky)) &&
+            !is_diagonal_blocked(board, black_piece, BLACK))
+        {
+            printf("\nKing checked by black %s (diagonal)", piece_map[id].name);
+            return true;
+        }
+
+        if ((abs(board->player[WHITE][id].pos.x - black_kx) ==
+             abs(board->player[WHITE][id].pos.y - black_ky)) &&
+            !is_diagonal_blocked(board, white_piece, WHITE))
+        {
+            printf("\nKing checked by white %s (diagonal)", piece_map[id].name);
+            return true;
+        }
+        printf("\n--- End of check for %s ---\n", piece_map[id].name);
+    }
 
     // Checks if checked by knight
     // for (int knight = KNIGHT10; knight < BISHOP12; knight++)
