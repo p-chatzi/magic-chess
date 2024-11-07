@@ -5,6 +5,7 @@
         "view.h": "c",
         "model.h": "c",
         "stdbool.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "stdio.h": "c"
     }
 }
