@@ -690,29 +690,13 @@ bool is_diagonal_blocked(board_s *board, char *list_id, int current_player)
             if (board->player[WHITE][piece].pos.x == current_row + (cells_to_check * row_direction) &&
                 board->player[WHITE][piece].pos.y == current_col + (cells_to_check * col_direction))
             {
-                printf("\nDiagonal blocked by white");
                 return true;
             }
-            if (board->player[BLACK][piece].pos.x == current_row + cells_to_check &&
-                board->player[BLACK][piece].pos.y == current_col + cells_to_check)
+            if (board->player[BLACK][piece].pos.x == current_row + (cells_to_check * row_direction) &&
+                board->player[BLACK][piece].pos.y == current_col + (cells_to_check * col_direction))
             {
-                printf("\nDiagonal blocked by black");
                 return true;
             }
-
-            // if (abs(target_col) == abs(target_row))
-            // {
-            // if (board->player[WHITE][piece].pos.x == current_row + cells_to_check)
-            // {
-            // printf("\nDiagonal blocked by white");
-            // return true;
-            // }
-            // if (board->player[BLACK][piece].pos.x == current_row + cells_to_check)
-            // {
-            // printf("\nDiagonal blocked by black");
-            // return true;
-            // }
-            // }
         }
     }
     return false;
