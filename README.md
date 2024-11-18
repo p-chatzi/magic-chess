@@ -39,8 +39,8 @@ What I want:
     - [x] From pawn
     - [x] From rook
     - [~] From knight
-    - [~] From bishop
-    - [~] From queen 
+    - [x] From bishop
+    - [x] From queen 
 - [ ] Check checkmate
     - [ ] Can king safely move
     - [ ] Can a piece block the row/col/diagonal
