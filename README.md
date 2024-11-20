@@ -27,7 +27,7 @@ What I want:
     - Refacto ids, pieces should be determine by pos only
     - Goes with change into gui instead of terminal
 - [x] Tie offer
-- [ ] Forfeit
+- [x] Forfeit
 
 ## Game engine / logic
 - [x] Cell availability
@@ -35,16 +35,17 @@ What I want:
 - [x] Save and load a game
 - [ ] Check pawn tranform possibility
 - [~] Check check
-    - [ ] Is moving prohibited due to check
+    - [~] Is moving prohibited due to check
     - [x] From pawn
     - [x] From rook
-    - [~] From knight
+    - [x] From knight
     - [x] From bishop
     - [x] From queen 
 - [ ] Check checkmate
     - [ ] Can king safely move
     - [ ] Can a piece block the row/col/diagonal
     - [ ] Can the piece attackin be captured
+        - [ ] If the king can eat it, can it do it safely
     - [ ] Make sure to test double checks
 - [~] Pieces movement patterns
     - [x] Pawn

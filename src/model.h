@@ -22,7 +22,8 @@ typedef enum menu
     RULES,
     SETTINGS,
     SAVE,
-    TIE
+    TIE,
+    FF
 } menu_options_e;
 
 typedef enum piece_type{
@@ -43,7 +44,7 @@ typedef enum piece_type{
     QUEEN,
     KING,
 
-    NUM_PIECES
+    NB_PIECES
 } piece_type_e;
 
 typedef enum player_choice
@@ -51,6 +52,7 @@ typedef enum player_choice
     PIECE_ID,
     ROW_ID,
     COL_ID,
+    DIAGONAL_ID,
 
     NB_INPUTS
 } player_choice_e;
@@ -95,7 +97,7 @@ bool has_live_piece_at(const pieces_s *p, position_s pos);
 
 typedef struct board
 {
-    pieces_s player[NUM_PLAYERS][NUM_PIECES];
+    pieces_s player[NUM_PLAYERS][NB_PIECES];
 } board_s;
 
 extern const pieces_s piece_map[];

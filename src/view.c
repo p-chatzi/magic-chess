@@ -27,7 +27,7 @@ void print_board(board_s *board)
             piece_type_e piece_found = PAWN0;
             player_e player_found = WHITE;
 
-            for (piece_type_e piece = PAWN0; piece < NUM_PIECES; piece++)
+            for (piece_type_e piece = PAWN0; piece < NB_PIECES; piece++)
             {
                 for (player_e color = WHITE; color < NUM_PLAYERS; color++)
                 {
@@ -57,7 +57,7 @@ void print_board(board_s *board)
 */
 void print_test_pieces(pieces_s *pieces, player_e player)
 {
-    for (int i = 0; i < NUM_PIECES; i++)
+    for (int i = 0; i < NB_PIECES; i++)
     {
         printf("\n\nPlayer %d, piece % d, type = %d", player, i, pieces[i].piece_type);
         printf("\nPlayer %d, piece % d, x = %d", player, i, pieces[i].pos.x);
@@ -72,7 +72,7 @@ void print_test_pieces(pieces_s *pieces, player_e player)
 */
 void get_player_choice(char *player_move)
 {
-    printf("\n\nEnter your move (Choose : save, tie or piece#-col-row) : ");
+    printf("\n\nEnter your move (Choose : save, tie, ff or piece#-col-row) : ");
     scanf("%19s", player_move);
 }
 
