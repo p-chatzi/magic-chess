@@ -1,11 +1,12 @@
 {
-    "makefile.configureOnOpen": false,
-    "files.associations": {
-        "controller.h": "c",
-        "view.h": "c",
-        "model.h": "c",
-        "stdbool.h": "c",
-        "cstdlib": "c",
-        "stdio.h": "c"
-    }
+  "makefile.configureOnOpen": false,
+  "files.associations": {
+    "controller.h": "c",
+    "view.h": "c",
+    "model.h": "c",
+    "stdbool.h": "c",
+    "cstdlib": "c",
+    "stdio.h": "c"
+  },
+  "C_Cpp_Runner.msvcBatchPath": ""
 }

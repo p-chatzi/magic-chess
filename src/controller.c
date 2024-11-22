@@ -259,117 +259,113 @@ int get_col_id(const char* name) {
     Sets all the pieces to their starting position and alive
     No return
 */
-// void reset_board(board_s *board)
-// {
-//     for (int i = PAWN0; i < ROOK8; i++)
-//     {
-//         board->player[WHITE][i].piece_type = i;
-//         board->player[WHITE][i].pos.x = 1;
-//         board->player[WHITE][i].pos.y = i;
-
-//         board->player[BLACK][i].piece_type = i;
-//         board->player[BLACK][i].pos.x = NUM_ROW - 2;
-//         board->player[BLACK][i].pos.y = i;
-//     }
-
-//     board->player[WHITE][ROOK8].piece_type = ROOK8;
-//     board->player[WHITE][ROOK8].pos.x = 0;
-//     board->player[WHITE][ROOK8].pos.y = 0;
-//     board->player[WHITE][ROOK9].piece_type = ROOK9;
-//     board->player[WHITE][ROOK9].pos.x = 0;
-//     board->player[WHITE][ROOK9].pos.y = NUM_COL - 1;
-//     board->player[BLACK][ROOK8].piece_type = ROOK8;
-//     board->player[BLACK][ROOK8].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][ROOK8].pos.y = 0;
-//     board->player[BLACK][ROOK9].piece_type = ROOK9;
-//     board->player[BLACK][ROOK9].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][ROOK9].pos.y = NUM_COL - 1;
-
-//     board->player[WHITE][KNIGHT10].piece_type = KNIGHT10;
-//     board->player[WHITE][KNIGHT10].pos.x = 0;
-//     board->player[WHITE][KNIGHT10].pos.y = 1;
-//     board->player[WHITE][KNIGHT11].piece_type = KNIGHT11;
-//     board->player[WHITE][KNIGHT11].pos.x = 0;
-//     board->player[WHITE][KNIGHT11].pos.y = NUM_COL - 2;
-//     board->player[BLACK][KNIGHT10].piece_type = KNIGHT10;
-//     board->player[BLACK][KNIGHT10].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][KNIGHT10].pos.y = 1;
-//     board->player[BLACK][KNIGHT11].piece_type = KNIGHT11;
-//     board->player[BLACK][KNIGHT11].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][KNIGHT11].pos.y = NUM_COL - 2;
-
-//     board->player[WHITE][BISHOP12].piece_type = BISHOP12;
-//     board->player[WHITE][BISHOP12].pos.x = 0;
-//     board->player[WHITE][BISHOP12].pos.y = 2;
-//     board->player[WHITE][BISHOP13].piece_type = BISHOP13;
-//     board->player[WHITE][BISHOP13].pos.x = 0;
-//     board->player[WHITE][BISHOP13].pos.y = NUM_COL - 3;
-//     board->player[BLACK][BISHOP12].piece_type = BISHOP12;
-//     board->player[BLACK][BISHOP12].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][BISHOP12].pos.y = 2;
-//     board->player[BLACK][BISHOP13].piece_type = BISHOP13;
-//     board->player[BLACK][BISHOP13].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][BISHOP13].pos.y = NUM_COL - 3;
-
-//     board->player[WHITE][QUEEN].piece_type = QUEEN;
-//     board->player[WHITE][QUEEN].pos.x = 0;
-//     board->player[WHITE][QUEEN].pos.y = NUM_COL - 5;
-//     board->player[BLACK][QUEEN].piece_type = QUEEN;
-//     board->player[BLACK][QUEEN].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][QUEEN].pos.y = NUM_COL - 5;
-
-//     board->player[WHITE][KING].piece_type = KING;
-//     board->player[WHITE][KING].pos.x = 0;
-//     board->player[WHITE][KING].pos.y = NUM_COL - 4;
-//     board->player[BLACK][KING].piece_type = KING;
-//     board->player[BLACK][KING].pos.x = NUM_ROW - 1;
-//     board->player[BLACK][KING].pos.y = NUM_COL - 4;
-
-//     for (int i = 0; i < NUM_PIECES; i++)
-//     {
-//         board->player[WHITE][i].is_alive = 1;
-//         board->player[BLACK][i].is_alive = 1;
-//     }
-
-//     for (int i = 0; i < NUM_COL; i++)
-//     {
-//         col_map[i].id = i;
-//     }
-// }
-
-// Original reset board above - test reset board under
 void reset_board(board_s* board) {
-    for(int i = 0; i < NUM_PIECES; i++) {
-        board->player[WHITE][i].is_alive = false;
-        board->player[BLACK][i].is_alive = false;
+    for(int i = PAWN0; i < ROOK8; i++) {
+        board->player[WHITE][i].piece_type = i;
+        board->player[WHITE][i].pos.x = 1;
+        board->player[WHITE][i].pos.y = i;
+
+        board->player[BLACK][i].piece_type = i;
+        board->player[BLACK][i].pos.x = NUM_ROW - 2;
+        board->player[BLACK][i].pos.y = i;
     }
 
+    board->player[WHITE][ROOK8].piece_type = ROOK8;
+    board->player[WHITE][ROOK8].pos.x = 0;
+    board->player[WHITE][ROOK8].pos.y = 0;
+    board->player[WHITE][ROOK9].piece_type = ROOK9;
+    board->player[WHITE][ROOK9].pos.x = 0;
+    board->player[WHITE][ROOK9].pos.y = NUM_COL - 1;
+    board->player[BLACK][ROOK8].piece_type = ROOK8;
+    board->player[BLACK][ROOK8].pos.x = NUM_ROW - 1;
+    board->player[BLACK][ROOK8].pos.y = 0;
+    board->player[BLACK][ROOK9].piece_type = ROOK9;
+    board->player[BLACK][ROOK9].pos.x = NUM_ROW - 1;
+    board->player[BLACK][ROOK9].pos.y = NUM_COL - 1;
+
     board->player[WHITE][KNIGHT10].piece_type = KNIGHT10;
-    board->player[WHITE][KNIGHT10].pos.x = 5;
-    board->player[WHITE][KNIGHT10].pos.y = d;
-    board->player[WHITE][KNIGHT10].is_alive = true;
-
+    board->player[WHITE][KNIGHT10].pos.x = 0;
+    board->player[WHITE][KNIGHT10].pos.y = 1;
+    board->player[WHITE][KNIGHT11].piece_type = KNIGHT11;
+    board->player[WHITE][KNIGHT11].pos.x = 0;
+    board->player[WHITE][KNIGHT11].pos.y = NUM_COL - 2;
+    board->player[BLACK][KNIGHT10].piece_type = KNIGHT10;
+    board->player[BLACK][KNIGHT10].pos.x = NUM_ROW - 1;
+    board->player[BLACK][KNIGHT10].pos.y = 1;
     board->player[BLACK][KNIGHT11].piece_type = KNIGHT11;
-    board->player[BLACK][KNIGHT11].pos.x = 1;
-    board->player[BLACK][KNIGHT11].pos.y = d;
-    board->player[BLACK][KNIGHT11].is_alive = true;
+    board->player[BLACK][KNIGHT11].pos.x = NUM_ROW - 1;
+    board->player[BLACK][KNIGHT11].pos.y = NUM_COL - 2;
 
-    board->player[WHITE][QUEEN].is_alive = false;
-    board->player[BLACK][QUEEN].is_alive = false;
+    board->player[WHITE][BISHOP12].piece_type = BISHOP12;
+    board->player[WHITE][BISHOP12].pos.x = 0;
+    board->player[WHITE][BISHOP12].pos.y = 2;
+    board->player[WHITE][BISHOP13].piece_type = BISHOP13;
+    board->player[WHITE][BISHOP13].pos.x = 0;
+    board->player[WHITE][BISHOP13].pos.y = NUM_COL - 3;
+    board->player[BLACK][BISHOP12].piece_type = BISHOP12;
+    board->player[BLACK][BISHOP12].pos.x = NUM_ROW - 1;
+    board->player[BLACK][BISHOP12].pos.y = 2;
+    board->player[BLACK][BISHOP13].piece_type = BISHOP13;
+    board->player[BLACK][BISHOP13].pos.x = NUM_ROW - 1;
+    board->player[BLACK][BISHOP13].pos.y = NUM_COL - 3;
+
+    board->player[WHITE][QUEEN].piece_type = QUEEN;
+    board->player[WHITE][QUEEN].pos.x = 0;
+    board->player[WHITE][QUEEN].pos.y = NUM_COL - 5;
+    board->player[BLACK][QUEEN].piece_type = QUEEN;
+    board->player[BLACK][QUEEN].pos.x = NUM_ROW - 1;
+    board->player[BLACK][QUEEN].pos.y = NUM_COL - 5;
 
     board->player[WHITE][KING].piece_type = KING;
-    board->player[WHITE][KING].pos.x = 2;
-    board->player[WHITE][KING].pos.y = a;
-    board->player[WHITE][KING].is_alive = true;
-
+    board->player[WHITE][KING].pos.x = 0;
+    board->player[WHITE][KING].pos.y = NUM_COL - 4;
     board->player[BLACK][KING].piece_type = KING;
-    board->player[BLACK][KING].pos.x = 4;
-    board->player[BLACK][KING].pos.y = a;
-    board->player[BLACK][KING].is_alive = true;
+    board->player[BLACK][KING].pos.x = NUM_ROW - 1;
+    board->player[BLACK][KING].pos.y = NUM_COL - 4;
+
+    for(int i = 0; i < NUM_PIECES; i++) {
+        board->player[WHITE][i].is_alive = 1;
+        board->player[BLACK][i].is_alive = 1;
+    }
+
     for(int i = 0; i < NUM_COL; i++) {
         col_map[i].id = i;
     }
 }
+
+// Original reset board above - test reset board under
+// void reset_board(board_s* board) {
+//     for(int i = 0; i < NUM_PIECES; i++) {
+//         board->player[WHITE][i].is_alive = false;
+//         board->player[BLACK][i].is_alive = false;
+//     }
+
+//     board->player[WHITE][KNIGHT10].piece_type = KNIGHT10;
+//     board->player[WHITE][KNIGHT10].pos.x = 5;
+//     board->player[WHITE][KNIGHT10].pos.y = d;
+//     board->player[WHITE][KNIGHT10].is_alive = true;
+
+//     board->player[BLACK][KNIGHT11].piece_type = KNIGHT11;
+//     board->player[BLACK][KNIGHT11].pos.x = 1;
+//     board->player[BLACK][KNIGHT11].pos.y = d;
+//     board->player[BLACK][KNIGHT11].is_alive = true;
+
+//     board->player[WHITE][QUEEN].is_alive = false;
+//     board->player[BLACK][QUEEN].is_alive = false;
+
+//     board->player[WHITE][KING].piece_type = KING;
+//     board->player[WHITE][KING].pos.x = 2;
+//     board->player[WHITE][KING].pos.y = a;
+//     board->player[WHITE][KING].is_alive = true;
+
+//     board->player[BLACK][KING].piece_type = KING;
+//     board->player[BLACK][KING].pos.x = 4;
+//     board->player[BLACK][KING].pos.y = a;
+//     board->player[BLACK][KING].is_alive = true;
+//     for(int i = 0; i < NUM_COL; i++) {
+//         col_map[i].id = i;
+//     }
+// }
 
 /*
     Stores information of every piece in a txt file (opens/creates the file)
@@ -494,7 +490,8 @@ bool is_my_king_checked(board_s* board, int current_player) {
     // Checks if checked by rook or by queen (row and col)
     int pieces[] = {ROOK8, ROOK9, QUEEN};
     for(int i = 0; i < 3; i++) {
-        char pieces_to_king[] = {pieces[i], board->player[opponent][i].pos.x, board->player[opponent][i].pos.y};
+        char pieces_to_king[] = {
+            pieces[i], board->player[opponent][i].pos.x, board->player[opponent][i].pos.y};
 
         if(board->player[opponent][pieces[i]].pos.x == king_x &&
            !is_row_blocked(board, pieces_to_king, current_player)) {
@@ -510,7 +507,8 @@ bool is_my_king_checked(board_s* board, int current_player) {
 
     // Checks if checked by bishop or by queen (diagonal)
     for(int id = BISHOP12; id <= QUEEN; id++) {
-        char piece_to_king[] = {id, board->player[opponent][id].pos.x, board->player[opponent][id].pos.y};
+        char piece_to_king[] = {
+            id, board->player[opponent][id].pos.x, board->player[opponent][id].pos.y};
 
         if((abs(board->player[opponent][id].pos.x - king_x) ==
             abs(board->player[opponent][id].pos.y - king_y)) &&
