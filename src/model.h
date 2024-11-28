@@ -3,18 +3,16 @@
 
 #include <stdbool.h>
 
-#define NUM_COL 8
+#define NB_COL 8
 
-typedef enum player
-{
+typedef enum player {
     WHITE,
     BLACK,
 
     NUM_PLAYERS
 } player_e;
 
-typedef enum menu
-{
+typedef enum menu {
     EXIT,
     START,
     LOAD,
@@ -22,10 +20,11 @@ typedef enum menu
     RULES,
     SETTINGS,
     SAVE,
-    TIE
+    TIE,
+    FF
 } menu_options_e;
 
-typedef enum piece_type{
+typedef enum piece_type {
     PAWN0,
     PAWN1,
     PAWN2,
@@ -43,11 +42,10 @@ typedef enum piece_type{
     QUEEN,
     KING,
 
-    NUM_PIECES
+    NB_PIECES
 } piece_type_e;
 
-typedef enum player_choice
-{
+typedef enum player_choice {
     PIECE_ID,
     ROW_ID,
     COL_ID,
@@ -55,8 +53,7 @@ typedef enum player_choice
     NB_INPUTS
 } player_choice_e;
 
-typedef enum col_name
-{
+typedef enum col_name {
     a,
     b,
     c,
@@ -66,36 +63,32 @@ typedef enum col_name
     g,
     h,
 
-    NUM_ROW
+    NB_ROW
 } col_name_e;
 
-typedef struct col
-{
+typedef struct col {
     char name[2];
     int id;
 } col_s;
 
-typedef struct pos
-{
+typedef struct pos {
     unsigned int x;
     unsigned int y;
 } position_s;
 
 bool is_pos_equal(position_s a, position_s b);
 
-typedef struct pieces
-{
+typedef struct pieces {
     char name[9];
     piece_type_e piece_type;
     position_s pos;
     bool is_alive;
 } pieces_s;
 
-bool has_live_piece_at(const pieces_s *p, position_s pos);
+bool has_live_piece_at(const pieces_s* p, position_s pos);
 
-typedef struct board
-{
-    pieces_s player[NUM_PLAYERS][NUM_PIECES];
+typedef struct board {
+    pieces_s player[NUM_PLAYERS][NB_PIECES];
 } board_s;
 
 extern const pieces_s piece_map[];

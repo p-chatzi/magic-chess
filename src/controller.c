@@ -74,7 +74,7 @@ void start_game(board_s* board, FILE* file, int current_player) {
             printf("\n%s's king in danger!", player[current_player]);
 
         // What does the player want to do
-        char player_move[20], list_id[NB_INPUTS];
+        char player_move[20], list_id[NB_INPUTS]; // piece-row-col or tie, ff, save
         get_player_choice(player_move);
         player_choice = tokenise_player_choice(player_move, list_id);
         if(player_choice == TIE) {
@@ -91,7 +91,11 @@ void start_game(board_s* board, FILE* file, int current_player) {
             save_game(board, file, current_player);
             continue;
         }
-
+        if(player_choice == FF) {
+            printf("\n%s forfeits the game", player[current_player]);
+            printf("\n%s wins!", player[!current_player]);
+            return;
+        }
         // You are not allowed to move at your current position (no skipping turns!)
         if(is_destination_current_position(board, list_id, current_player)) continue;
 
@@ -138,7 +142,7 @@ bool is_piece_selected_alive(board_s* board, char* list_id, int current_player) 
     No return.
 */
 void capture_enemy_piece(board_s* board, char* list_id, int current_player) {
-    for(int pid = PAWN0; pid < NUM_PIECES; pid++) {
+    for(int pid = PAWN0; pid < NB_PIECES; pid++) {
         if(current_player == WHITE) {
             if(board->player[BLACK][pid].pos.x == list_id[ROW_ID] &&
                board->player[BLACK][pid].pos.y == list_id[COL_ID])
@@ -157,7 +161,7 @@ void capture_enemy_piece(board_s* board, char* list_id, int current_player) {
     Return : True if cell is occupied, false if not
 */
 bool is_cell_occupied_by_ally(board_s* board, char* list_id, int current_player) {
-    for(int pid = PAWN0; pid < NUM_PIECES; pid++) {
+    for(int pid = PAWN0; pid < NB_PIECES; pid++) {
         if(board->player[current_player][pid].pos.x == list_id[ROW_ID] &&
            board->player[current_player][pid].pos.y == list_id[COL_ID]) {
             if((int)list_id[PIECE_ID] != pid) return true;
@@ -173,7 +177,7 @@ bool is_cell_occupied_by_ally(board_s* board, char* list_id, int current_player)
 */
 bool is_cell_occupied_by_enemy(board_s* board, char* list_id, int current_player) {
     if(current_player == BLACK) {
-        for(int pid = PAWN0; pid < NUM_PIECES; pid++) {
+        for(int pid = PAWN0; pid < NB_PIECES; pid++) {
             if(board->player[WHITE][pid].pos.x == list_id[ROW_ID] &&
                board->player[WHITE][pid].pos.y == list_id[COL_ID]) {
                 if((int)list_id[PIECE_ID] != pid) return true;
@@ -181,7 +185,7 @@ bool is_cell_occupied_by_enemy(board_s* board, char* list_id, int current_player
         }
     }
     if(current_player == WHITE) {
-        for(int pid = PAWN0; pid < NUM_PIECES; pid++) {
+        for(int pid = PAWN0; pid < NB_PIECES; pid++) {
             if(board->player[BLACK][pid].pos.x == list_id[ROW_ID] &&
                board->player[BLACK][pid].pos.y == list_id[COL_ID]) {
                 if((int)list_id[PIECE_ID] != pid) return true;
@@ -202,6 +206,7 @@ int tokenise_player_choice(char* player_move, char* list_id) {
     selected_piece = strtok(player_move, "-");
     if(strcmp(selected_piece, "tie") == 0) return TIE;
     if(strcmp(selected_piece, "save") == 0) return SAVE;
+    if((strcmp(selected_piece, "ff") == 0) || strcmp(selected_piece, "forfeit") == 0) return FF;
     col = strtok(NULL, "-"); // In chess we say letter then number
     row = strtok(NULL, "-"); // Which is actually : column then row
 
@@ -212,11 +217,11 @@ int tokenise_player_choice(char* player_move, char* list_id) {
     printf(
         "\nPiece: %s, id: %d \nRow: %s w/ id: %d \nCol: %s w/ id: %d\n",
         selected_piece,
-        list_id[0],
+        list_id[PIECE_ID],
         row,
-        list_id[1],
+        list_id[ROW_ID],
         col,
-        list_id[2]);
+        list_id[COL_ID]);
     return START;
 }
 
@@ -234,7 +239,7 @@ void update_piece(board_s* board, int current_player, char* list_id) {
     Return : ID of the piece
 */
 int get_piece_id(const char* name) {
-    for(int i = PAWN0; i < NUM_PIECES; i++) {
+    for(int i = PAWN0; i < NB_PIECES; i++) {
         if(strcasecmp(name, piece_map[i].name) == 0) {
             return piece_map[i].piece_type;
         }
@@ -247,7 +252,7 @@ int get_piece_id(const char* name) {
     Return : ID of the column
 */
 int get_col_id(const char* name) {
-    for(int i = 0; i < NUM_ROW; i++) {
+    for(int i = 0; i < NB_ROW; i++) {
         if(strcasecmp(name, col_map[i].name) == 0) {
             return col_map[i].id;
         }
@@ -266,7 +271,7 @@ void reset_board(board_s* board) {
         board->player[WHITE][i].pos.y = i;
 
         board->player[BLACK][i].piece_type = i;
-        board->player[BLACK][i].pos.x = NUM_ROW - 2;
+        board->player[BLACK][i].pos.x = NB_ROW - 2;
         board->player[BLACK][i].pos.y = i;
     }
 
@@ -275,67 +280,67 @@ void reset_board(board_s* board) {
     board->player[WHITE][ROOK8].pos.y = 0;
     board->player[WHITE][ROOK9].piece_type = ROOK9;
     board->player[WHITE][ROOK9].pos.x = 0;
-    board->player[WHITE][ROOK9].pos.y = NUM_COL - 1;
+    board->player[WHITE][ROOK9].pos.y = NB_COL - 1;
     board->player[BLACK][ROOK8].piece_type = ROOK8;
-    board->player[BLACK][ROOK8].pos.x = NUM_ROW - 1;
+    board->player[BLACK][ROOK8].pos.x = NB_ROW - 1;
     board->player[BLACK][ROOK8].pos.y = 0;
     board->player[BLACK][ROOK9].piece_type = ROOK9;
-    board->player[BLACK][ROOK9].pos.x = NUM_ROW - 1;
-    board->player[BLACK][ROOK9].pos.y = NUM_COL - 1;
+    board->player[BLACK][ROOK9].pos.x = NB_ROW - 1;
+    board->player[BLACK][ROOK9].pos.y = NB_COL - 1;
 
     board->player[WHITE][KNIGHT10].piece_type = KNIGHT10;
     board->player[WHITE][KNIGHT10].pos.x = 0;
     board->player[WHITE][KNIGHT10].pos.y = 1;
     board->player[WHITE][KNIGHT11].piece_type = KNIGHT11;
     board->player[WHITE][KNIGHT11].pos.x = 0;
-    board->player[WHITE][KNIGHT11].pos.y = NUM_COL - 2;
+    board->player[WHITE][KNIGHT11].pos.y = NB_COL - 2;
     board->player[BLACK][KNIGHT10].piece_type = KNIGHT10;
-    board->player[BLACK][KNIGHT10].pos.x = NUM_ROW - 1;
+    board->player[BLACK][KNIGHT10].pos.x = NB_ROW - 1;
     board->player[BLACK][KNIGHT10].pos.y = 1;
     board->player[BLACK][KNIGHT11].piece_type = KNIGHT11;
-    board->player[BLACK][KNIGHT11].pos.x = NUM_ROW - 1;
-    board->player[BLACK][KNIGHT11].pos.y = NUM_COL - 2;
+    board->player[BLACK][KNIGHT11].pos.x = NB_ROW - 1;
+    board->player[BLACK][KNIGHT11].pos.y = NB_COL - 2;
 
     board->player[WHITE][BISHOP12].piece_type = BISHOP12;
     board->player[WHITE][BISHOP12].pos.x = 0;
     board->player[WHITE][BISHOP12].pos.y = 2;
     board->player[WHITE][BISHOP13].piece_type = BISHOP13;
     board->player[WHITE][BISHOP13].pos.x = 0;
-    board->player[WHITE][BISHOP13].pos.y = NUM_COL - 3;
+    board->player[WHITE][BISHOP13].pos.y = NB_COL - 3;
     board->player[BLACK][BISHOP12].piece_type = BISHOP12;
-    board->player[BLACK][BISHOP12].pos.x = NUM_ROW - 1;
+    board->player[BLACK][BISHOP12].pos.x = NB_ROW - 1;
     board->player[BLACK][BISHOP12].pos.y = 2;
     board->player[BLACK][BISHOP13].piece_type = BISHOP13;
-    board->player[BLACK][BISHOP13].pos.x = NUM_ROW - 1;
-    board->player[BLACK][BISHOP13].pos.y = NUM_COL - 3;
+    board->player[BLACK][BISHOP13].pos.x = NB_ROW - 1;
+    board->player[BLACK][BISHOP13].pos.y = NB_COL - 3;
 
     board->player[WHITE][QUEEN].piece_type = QUEEN;
     board->player[WHITE][QUEEN].pos.x = 0;
-    board->player[WHITE][QUEEN].pos.y = NUM_COL - 5;
+    board->player[WHITE][QUEEN].pos.y = NB_COL - 5;
     board->player[BLACK][QUEEN].piece_type = QUEEN;
-    board->player[BLACK][QUEEN].pos.x = NUM_ROW - 1;
-    board->player[BLACK][QUEEN].pos.y = NUM_COL - 5;
+    board->player[BLACK][QUEEN].pos.x = NB_ROW - 1;
+    board->player[BLACK][QUEEN].pos.y = NB_COL - 5;
 
     board->player[WHITE][KING].piece_type = KING;
     board->player[WHITE][KING].pos.x = 0;
-    board->player[WHITE][KING].pos.y = NUM_COL - 4;
+    board->player[WHITE][KING].pos.y = NB_COL - 4;
     board->player[BLACK][KING].piece_type = KING;
-    board->player[BLACK][KING].pos.x = NUM_ROW - 1;
-    board->player[BLACK][KING].pos.y = NUM_COL - 4;
+    board->player[BLACK][KING].pos.x = NB_ROW - 1;
+    board->player[BLACK][KING].pos.y = NB_COL - 4;
 
-    for(int i = 0; i < NUM_PIECES; i++) {
+    for(int i = 0; i < NB_PIECES; i++) {
         board->player[WHITE][i].is_alive = 1;
         board->player[BLACK][i].is_alive = 1;
     }
 
-    for(int i = 0; i < NUM_COL; i++) {
+    for(int i = 0; i < NB_COL; i++) {
         col_map[i].id = i;
     }
 }
 
 // Original reset board above - test reset board under
 // void reset_board(board_s* board) {
-//     for(int i = 0; i < NUM_PIECES; i++) {
+//     for(int i = 0; i < NB_PIECES; i++) {
 //         board->player[WHITE][i].is_alive = false;
 //         board->player[BLACK][i].is_alive = false;
 //     }
@@ -362,7 +367,7 @@ void reset_board(board_s* board) {
 //     board->player[BLACK][KING].pos.x = 4;
 //     board->player[BLACK][KING].pos.y = a;
 //     board->player[BLACK][KING].is_alive = true;
-//     for(int i = 0; i < NUM_COL; i++) {
+//     for(int i = 0; i < NB_COL; i++) {
 //         col_map[i].id = i;
 //     }
 // }
@@ -380,7 +385,7 @@ void save_game(board_s* board, FILE* file, int current_player) {
 
     fprintf(file, "%d-", current_player);
 
-    for(int piece = PAWN0; piece < NUM_PIECES; piece++) {
+    for(int piece = PAWN0; piece < NB_PIECES; piece++) {
         fprintf(
             file,
             "%u-%u-%d-%d-",
@@ -433,7 +438,7 @@ void set_board_from_save(board_s* board, char* buffer, int* current_player) {
     char* player_turn = strtok(buffer, "-");
     *current_player = atoi(player_turn);
     printf(" %s", player_turn);
-    for(int piece = PAWN0; piece < NUM_PIECES; piece++) {
+    for(int piece = PAWN0; piece < NB_PIECES; piece++) {
         board->player[WHITE][piece].piece_type = atoi(strtok(NULL, "-"));
         board->player[WHITE][piece].pos.x = atoi(strtok(NULL, "-"));
         board->player[WHITE][piece].pos.y = atoi(strtok(NULL, "-"));
@@ -569,7 +574,7 @@ bool is_row_blocked(board_s* board, char* list_id, int current_player) {
     int target_col = list_id[COL_ID];
     int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
 
-    for(int i = PAWN0; i < NUM_PIECES; i++) {
+    for(int i = PAWN0; i < NB_PIECES; i++) {
         int direction = (target_row > current_row) ? 1 : -1;
         for(int row_i = 1; row_i < (direction * target_row) - (direction * current_row); row_i++) {
             if(board->player[WHITE][i].pos.x == current_row + (direction * row_i) &&
@@ -598,7 +603,7 @@ bool is_col_blocked(board_s* board, char* list_id, int current_player) {
     int target_col = list_id[COL_ID];
     int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
-    for(int i = PAWN0; i < NUM_PIECES; i++) {
+    for(int i = PAWN0; i < NB_PIECES; i++) {
         int direction = (target_col > current_col) ? 1 : -1;
         for(int col_move = 1; col_move < (direction * target_col) - (direction * current_col);
             col_move++) {
@@ -628,7 +633,7 @@ bool is_diagonal_blocked(board_s* board, char* list_id, int current_player) {
     int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
     int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
-    for(int piece = PAWN0; piece < NUM_PIECES; piece++) {
+    for(int piece = PAWN0; piece < NB_PIECES; piece++) {
         int distance = abs(target_row - current_row);
         if(distance == 1) return false;
         for(int cells_to_check = 1; cells_to_check < abs(target_row - current_row);
@@ -660,8 +665,8 @@ bool is_diagonal_blocked(board_s* board, char* list_id, int current_player) {
 bool is_king_move_legal(board_s* board, char* list_id, int current_player) {
     int target_row = list_id[ROW_ID];
     int target_col = list_id[COL_ID];
-    int current_row = board->player[current_player][(int)list_id[0]].pos.x;
-    int current_col = board->player[current_player][(int)list_id[0]].pos.y;
+    int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
+    int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
     if((abs(target_col - current_col) == 1 || target_col - current_col == 0) &&
        (abs(target_row - current_row) == 1 || target_row - current_row == 0))
@@ -677,8 +682,8 @@ bool is_king_move_legal(board_s* board, char* list_id, int current_player) {
 bool is_queen_move_legal(board_s* board, char* list_id, int current_player) {
     int target_row = list_id[ROW_ID];
     int target_col = list_id[COL_ID];
-    int current_row = board->player[current_player][(int)list_id[0]].pos.x;
-    int current_col = board->player[current_player][(int)list_id[0]].pos.y;
+    int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
+    int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
     if(is_rook_move_legal(board, list_id, current_player) &&
        ((target_row == current_row && !is_row_blocked(board, list_id, current_player)) ||
@@ -703,14 +708,14 @@ bool is_bishop_move_legal(board_s* board, char* list_id, int current_player) {
     int current_row = board->player[current_player][(int)list_id[PIECE_ID]].pos.x;
     int current_col = board->player[current_player][(int)list_id[PIECE_ID]].pos.y;
 
-    for(int piece = PAWN0; piece < NUM_PIECES; piece++) {
+    for(int piece = PAWN0; piece < NB_PIECES; piece++) {
         int cells_moved = abs(target_col - current_col);
         int col_direction = (target_col > current_col) ? 1 : -1;
         int row_direction = (target_row > current_row) ? 1 : -1;
 
         if(target_col == current_col + cells_moved * col_direction &&
            target_row == current_row + cells_moved * row_direction && target_col >= a &&
-           target_col <= NUM_COL - 1 && target_row >= 0 && target_row <= NUM_ROW - 1 &&
+           target_col <= NB_COL - 1 && target_row >= 0 && target_row <= NB_ROW - 1 &&
            !is_diagonal_blocked(board, list_id, current_player))
             return true;
     }
@@ -783,7 +788,7 @@ bool is_pawn_move_legal(board_s* board, char* list_id, int current_player) {
     // dinner time!
     if((target_col == current_col - 1 && target_col >= a &&
         target_row == current_row + direction) ||
-       (target_col == current_col + 1 && target_col <= NUM_COL - 1 &&
+       (target_col == current_col + 1 && target_col <= NB_COL - 1 &&
         target_row == current_row + direction))
         if(!is_cell_occupied_by_ally(board, list_id, current_player)) return true;
     if(target_col != current_col) {
@@ -793,7 +798,7 @@ bool is_pawn_move_legal(board_s* board, char* list_id, int current_player) {
 
     // Check if it's the pawn's first move
     bool is_first_move = (current_player == WHITE && current_row == 1) ||
-                         (current_player == BLACK && current_row == NUM_ROW - 2);
+                         (current_player == BLACK && current_row == NB_ROW - 2);
 
     // Check for two square move (only on first move)
     if(is_first_move && target_row == current_row + (2 * direction)) {
