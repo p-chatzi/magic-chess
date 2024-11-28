@@ -44,7 +44,7 @@ bool is_diagonal_blocked(board_s* board, int* list_id, int current_player);
 bool is_cell_occupied_by_enemy(board_s* board, int* list_id, int current_player);
 bool is_my_king_checked(board_s* board, int current_player);
 bool is_destination_current_position(board_s* board, int* list_id, int current_player);
-bool save_the_king(board_s* board, int current_player, int* attacker, int blocked_by);
+bool save_the_king(board_s* board, int current_player, int* attacker);
 
 /*
     Other fonctions

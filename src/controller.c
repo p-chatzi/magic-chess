@@ -491,7 +491,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
         if(board->player[opponent][pawn].pos.x == king_x + 1 &&
            abs(king_y - board->player[opponent][pawn].pos.y) == 1) {
             printf("\n%s king checked by %s's pawn", player[current_player], player[opponent]);
-            save_the_king(board, current_player, attacking_pawn, pawn);
+            save_the_king(board, current_player, attacking_pawn);
             return true;
         }
     }
@@ -501,7 +501,6 @@ bool is_my_king_checked(board_s* board, int current_player) {
     for(int i = 0; i < 3; i++) {
         int attacking_alligned[3] = {
             pieces[i], board->player[opponent][i].pos.x, board->player[opponent][i].pos.y};
-        int blocked_by;
 
         // If the king is on the same row as the attacking piece without any piece in between
         if(board->player[opponent][pieces[i]].pos.x == king_x &&
@@ -511,8 +510,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
                 player[current_player],
                 player[opponent],
                 piece_map[pieces[i]].name);
-            blocked_by = ROW_ID;
-            save_the_king(board, current_player, attacking_alligned, blocked_by);
+            save_the_king(board, current_player, attacking_alligned);
             return true;
         }
 
@@ -524,8 +522,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
                 player[current_player],
                 player[opponent],
                 piece_map[pieces[i]].name);
-            blocked_by = COL_ID;
-            save_the_king(board, current_player, attacking_alligned, blocked_by);
+            save_the_king(board, current_player, attacking_alligned);
             return true;
         }
     }
@@ -534,7 +531,6 @@ bool is_my_king_checked(board_s* board, int current_player) {
     for(int id = BISHOP12; id <= QUEEN; id++) {
         int attacking_diagonal[3] = {
             id, board->player[opponent][id].pos.x, board->player[opponent][id].pos.y};
-        int blocked_by;
 
         // If the king is on the same diagonal as the attacking piece witghout any piece in between
         if((abs(board->player[opponent][id].pos.x - king_x) ==
@@ -545,8 +541,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
                 player[current_player],
                 player[opponent],
                 piece_map[id].name);
-            blocked_by = DIAGONAL_ID;
-            save_the_king(board, current_player, attacking_diagonal, blocked_by);
+            save_the_king(board, current_player, attacking_diagonal);
             return true;
         }
     }
@@ -559,7 +554,6 @@ bool is_my_king_checked(board_s* board, int current_player) {
             pieces[knight],
             board->player[opponent][knight].pos.x,
             board->player[opponent][knight].pos.y};
-        int blocked_by;
 
         // 2 rows(up or down) 1 col(left or right)
         if(abs(knight_x - king_x) == 2 && abs(knight_y - king_y) == 1) {
@@ -568,8 +562,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
                 player[current_player],
                 player[opponent],
                 piece_map[knight].name);
-            blocked_by = knight;
-            save_the_king(board, current_player, attacking_knight, blocked_by);
+            save_the_king(board, current_player, attacking_knight);
             return true;
         }
 
@@ -580,8 +573,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
                 player[current_player],
                 player[opponent],
                 piece_map[knight].name);
-            blocked_by = knight;
-            save_the_king(board, current_player, attacking_knight, knight);
+            save_the_king(board, current_player, attacking_knight);
             return true;
         }
     }
@@ -590,9 +582,8 @@ bool is_my_king_checked(board_s* board, int current_player) {
     for(int piece = PAWN0; piece < KING; piece++) {
         int attacking_piece[3] = {
             piece, board->player[opponent][piece].pos.x, board->player[opponent][piece].pos.y};
-        int blocked_by = -1; // No piece can block
 
-        if(!save_the_king(board, current_player, attacking_piece, blocked_by)) {
+        if(!save_the_king(board, current_player, attacking_piece)) {
             printf("Checkmate");
         }
     }
@@ -603,7 +594,7 @@ bool is_my_king_checked(board_s* board, int current_player) {
     * Checks if there is any possible move to avoid the check
     * Return : True if there is no possible move
 */
-bool save_the_king(board_s* board, int current_player, int* attacker, int blocked_by) {
+bool save_the_king(board_s* board, int current_player, int* attacker) {
     // attacker[PIECE_ID] : Id of the attacking piece
     // attacker[ROW_ID] : Current row of the attacking piece
     // attacker[COL_ID] : Current col of the attacking piece
