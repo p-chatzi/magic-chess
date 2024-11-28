@@ -82,6 +82,7 @@ typedef struct pieces {
     char name[9];
     piece_type_e piece_type;
     position_s pos;
+    int times_moved;
     bool is_alive;
 } pieces_s;
 

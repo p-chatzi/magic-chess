@@ -13,10 +13,10 @@ void print_board(board_s* board) {
     printf("\n ");
     for(int x = 0; x < NB_COL; x++)
         printf("    %c", 97 + x);
-    printf("\n____________________________________________\n");
+    printf("\n___________________________________________\n");
 
     for(int x = 0; x < NB_ROW; x++) {
-        printf("  |\n%d | ", x + 1);
+        printf("  |    |    |    |    |    |    |    |    |\n%d |", x + 1);
 
         for(int y = 0; y < NB_COL; y++) {
             bool was_piece_found = 0;
@@ -36,11 +36,11 @@ void print_board(board_s* board) {
             }
 
             if(was_piece_found)
-                printf("%d.%02d ", player_found, piece_found);
+                printf("%d.%02d|", player_found, piece_found);
             else
-                printf(".... ");
+                printf("....|");
         }
-        printf("\n__|_________________________________________\n");
+        printf("\n__|____|____|____|____|____|____|____|____|\n");
     }
 }
 
